@@ -1,3 +1,8 @@
+.vscode/*
+__pycache__/*
 tutorial.txt
 **venv*
 localsettings.py
+
+# Custom ignores
+tintin.jpg

@@ -70,6 +70,9 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import COMMASPACE, formatdate
 
+# SMTP_SERVER='smtp.pepipost.com'
+# SMTP_USERNAME='storrellas'
+# SMTP_PASSWORD='storrellas_2907e95734882dd7e843c038026bc04b'
 
 def send_mail(send_from, send_to, subject, text, files=None):
     assert isinstance(send_to, list)
