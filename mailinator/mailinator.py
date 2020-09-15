@@ -166,6 +166,12 @@ class DeleteRuleRequest(RequestData):
         url=f'{self._base_url}/domains/{domain}/rules/{rule_id}'
         super().__init__(RequestMethod.DELETE, url)
 
+class MailinatorException(Exception):
+    def __init__(self, message):
+        # Call the base class constructor with the parameters it needs
+        super().__init__(message)
+
+
 
 
 class Mailinator:
@@ -192,13 +198,17 @@ class Mailinator:
         elif request_data.method == RequestMethod.DELETE:
             response = requests.delete(request_data.url, headers=self.headers)
         else:
-            raise Exception(f"Method not identified {request_data.method}")
+            raise MailinatorException(f"Method not identified {request_data.method}")
 
         # Check that response is OK
-        if response.status_code != HTTPStatus.OK:
-            raise Exception("Request returned no ok")
+        if response.status_code == HTTPStatus.OK or \
+             response.status_code == HTTPStatus.NO_CONTENT:
+            pass
+        else:
+            raise MailinatorException("Request returned no ok")
 
-        if response.headers['Content-Type'] == 'application/json':
+        if 'Content-Type' in response.headers and \
+            response.headers['Content-Type'] == 'application/json':
             return response.json()
         else:
             return response

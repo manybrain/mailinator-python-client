@@ -216,11 +216,10 @@ class TestClass:
         print(response)
 
         # Enable Rule
-        assert self.mailinator.enable_rule(DOMAIN, rule_id) == True
-
+        self.mailinator.request( EnableRuleRequest(DOMAIN, rule_id) )
 
         # Disable Rule
-        assert self.mailinator.disable_rule(DOMAIN, rule_id) == True
+        self.mailinator.request( DisableRuleRequest(DOMAIN, rule_id) )
 
         # Delete Rule
         response = self.mailinator.request( DeleteRuleRequest(DOMAIN, rule_id) )
