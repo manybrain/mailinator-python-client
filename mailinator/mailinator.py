@@ -10,6 +10,120 @@ class RequestMethod(enum.Enum):
     PATCH = "patch"
     DELETE = "delete"
 
+class RequestData:
+    _base_url = 'https://mailinator.com/api/v2'
+
+    method = None
+    url = None
+    json = None
+
+    def __init__(self, method, url, json=None):
+        self.method = method
+        self.url = url
+        self.json = json
+
+#########################
+## MESSAGE API
+#########################
+
+class GetInboxRequest(RequestData):
+    def __init__(self, domain, inbox):
+        if domain is None:
+            raise ValueError('domain cannot be None')
+        if inbox is None:
+            raise ValueError('inbox cannot be None')
+
+
+        url=f'{self._base_url}/domains/{domain}/inboxes/{inbox}?limit=2&sort=descending'
+        super().__init__(RequestMethod.GET, url)
+
+class GetMessageRequest(RequestData):
+    def __init__(self, domain, inbox, message_id):
+        if domain is None:
+            raise ValueError('domain cannot be None')
+        if inbox is None:
+            raise ValueError('inbox cannot be None')
+        if message_id is None:
+            raise ValueError('message_id cannot be None')
+
+        url=f'{self._base_url}/domains/{domain}/inboxes/{inbox}/messages/{message_id}'
+        super().__init__(RequestMethod.GET, url)
+
+class GetSmsInboxRequest(RequestData):
+    def __init__(self, domain, phone_number):
+        if domain is None:
+            raise ValueError('domain cannot be None')
+        if phone_number is None:
+            raise ValueError('phone_number cannot be None')
+
+
+        url=f'{self._base_url}/domains/{domain}/inboxes/{phone_number}'
+        super().__init__(RequestMethod.GET, url)
+
+class GetAttachmentsRequest(RequestData):
+    def __init__(self, domain, inbox, message_id):
+        if domain is None:
+            raise ValueError('domain cannot be None')
+        if inbox is None:
+            raise ValueError('inbox cannot be None')
+        if message_id is None:
+            raise ValueError('message_id cannot be None')
+
+        url=f'{self._base_url}/domains/{domain}/inboxes/{inbox}/messages/{message_id}/attachments'
+        super().__init__(RequestMethod.GET, url)
+
+class GetAttachmentRequest(RequestData):
+    def __init__(self, domain, inbox, message_id, attachment_id):
+        url=f'{self._base_url}/domains/{domain}/inboxes/{inbox}/messages/{message_id}/attachments/{attachment_id}'
+        super().__init__(RequestMethod.GET, url)
+
+class DeleteDomainMessagesRequest(RequestData):
+    def __init__(self, domain):
+        if domain is None:
+            raise ValueError('domain cannot be None')
+
+        url=f'{self._base_url}/domains/{domain}/inboxes'
+        super().__init__(RequestMethod.DELETE, url)
+
+class DeleteInboxMessagesRequest(RequestData):
+    def __init__(self, domain, inbox):
+        if domain is None:
+            raise ValueError('domain cannot be None')
+        if inbox is None:
+            raise ValueError('inbox cannot be None')
+
+        url=f'{self._base_url}/domains/{domain}/inboxes/{inbox}'
+        super().__init__(RequestMethod.DELETE, url)
+
+class DeleteMessageRequest(RequestData):
+    def __init__(self, domain, inbox, message_id):
+        if domain is None:
+            raise ValueError('domain cannot be None')
+        if inbox is None:
+            raise ValueError('inbox cannot be None')
+        if message_id is None:
+            raise ValueError('message_id cannot be None')
+
+        url=f'{self._base_url}/domains/{domain}/inboxes/{inbox}/messages/{message_id}'
+        super().__init__(RequestMethod.DELETE, url)
+
+#########################
+## DOMAIN API
+#########################
+
+class GetDomainsRequest(RequestData):
+    def __init__(self):
+        url=f'{self._base_url}/domains'
+        super().__init__(RequestMethod.GET, url)
+
+class GetDomainRequest(RequestData):
+    def __init__(self, domain):
+        if domain is None:
+            raise ValueError('domain cannot be None')
+
+        url=f'{self._base_url}/domains/{domain}/'
+        super().__init__(RequestMethod.GET, url)
+
 class Mailinator:
 
     token = None
@@ -28,7 +142,7 @@ class Mailinator:
         if request_data.method == RequestMethod.GET:
             response = requests.get(request_data.url, headers=self.headers)
         elif request_data.method == RequestMethod.POST:
-            response = requests.post(request_data.url, headers=self.headers)
+            response = requests.post(request_data.url, json=request_data.json, headers=self.headers)
         elif request_data.method == RequestMethod.PUT:
             response = requests.put(request_data.url, headers=self.headers)
         elif request_data.method == RequestMethod.DELETE:
@@ -40,99 +154,11 @@ class Mailinator:
         if response.status_code != HTTPStatus.OK:
             raise Exception("Request returned no ok")
 
-
-        # Handle if deserialization fails
-        try:
+        if response.headers['Content-Type'] == 'application/json':
             return response.json()
-        except ValueError:
-            return ''
+        else:
+            return response
 
-
-    #########################
-    ## MESSAGE API
-    #########################
-
-    def fetch_inbox(self, domain, inbox):
-        if inbox is None:
-            raise ValueError('Token cannot be None')
-        url=f'{self.__base_url}/domains/{domain}/inboxes/{inbox}?limit=2&sort=descending'
-        response = requests.get(url, headers=self.headers)
-        return response.json()
-
-    def fetch_message(self, domain, inbox, message_id):
-        if inbox is None:
-            raise ValueError('inbox cannot be None')
-        if message_id is None:
-            raise ValueError('inbox cannot be None')
-
-        url=f'{self.__base_url}/domains/{domain}/inboxes/{inbox}/messages/{message_id}'
-        response = requests.get(url, headers=self.headers)
-        return response.json()
-
-
-    def fetch_sms_inbox(self, sms_inbox, sms_team_number):
-        if sms_inbox is None:
-            raise ValueError('sms_inbox cannot be None')
-        if sms_team_number is None:
-            raise ValueError('sms_team_member cannot be None')
-
-        url=f'{self.__base_url}/domains/{sms_inbox}/inboxes/{sms_team_number}'
-        response = requests.get(url, headers=self.headers)
-        return response.json()
-
-    def fetch_message_list_attachments(self, domain, inbox, message_id):
-        if inbox is None:
-            raise ValueError('inbox cannot be None')
-        if message_id is None:
-            raise ValueError('inbox cannot be None')
-
-        url=f'{self.__base_url}/domains/{domain}/inboxes/{inbox}/messages/{message_id}/attachments'
-        response = requests.get(url, headers=self.headers)
-        return response.json()
-
-    def fetch_message_attachment(self, domain, inbox, message_id, attachment_id, output_filename):
-        url=f'https://mailinator.com/api/v2/domains/{domain}/inboxes/{inbox}/messages/{message_id}/attachments/{attachment_id}'
-        response = requests.get(url, headers=self.headers)
-        # print(" ", response.content)
-        # json_data = json.loads(response.text)
-
-        with open(output_filename, 'wb') as f:
-            for chunk in response.iter_content(chunk_size=1024): 
-                if chunk: # filter out keep-alive new chunks
-                    f.write(chunk)
-
-    def delete_message(self, domain, inbox, message_id):
-        
-        if inbox is None:
-            raise ValueError('INBOX cannot be None')
-        # Delete inbox
-        url=f'{self.__base_url}/{domain}/inboxes/{inbox}/messages/{message_id}'
-        requests.delete(url, headers=self.headers)
-
-    def delete_inbox(self, domain, inbox):
-        if inbox is None:
-            raise ValueError('INBOX cannot be None')
-        # Delete inbox
-        url=f'{self.__base_url}/{domain}/inboxes/{inbox}'
-        requests.delete(url, headers=self.headers)
-
-    def delete_domain(self, domain):
-        url=f'{self.__base_url}/{domain}/inboxes'
-        requests.delete(url, headers=self.headers)
-
-    #########################
-    ## DOMAIN API
-    #########################
-
-    def get_all_domains(self):
-        url=f'{self.__base_url}/domains/'
-        response = requests.get(url, headers=self.headers)
-        return response.json()
-
-    def get_domain(self, id):
-        url=f'{self.__base_url}/domains/{id}'
-        response = requests.get(url, headers=self.headers)
-        return response.json()
 
     #########################
     ## RULES API
