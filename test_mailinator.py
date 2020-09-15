@@ -249,4 +249,3 @@ class TestClass:
     # #     # Fetch Inbox
     # #     response = self.mailinator.fetch_inbox(INBOX)
     # #     assert len(response['msgs']) == 2
-

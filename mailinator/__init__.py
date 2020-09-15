@@ -1,0 +1,1 @@
+from .mailinator import *

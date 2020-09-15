@@ -70,9 +70,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import COMMASPACE, formatdate
 
-# SMTP_SERVER='smtp.pepipost.com'
-# SMTP_USERNAME='storrellas'
-# SMTP_PASSWORD='storrellas_2907e95734882dd7e843c038026bc04b'
+
 
 def send_mail(send_from, send_to, subject, text, files=None):
     assert isinstance(send_to, list)
@@ -114,7 +112,7 @@ def send_mail(send_from, send_to, subject, text, files=None):
     smtp.close()
 
 
-send_mail('storrellas@gmail.com', ['test1@storrellasteam.m8r.co'], 'MySubject', 'Here my text', files=['./tintin.jpg'])
+send_mail(SMTP_SENDER, ['test1@storrellasteam.m8r.co'], 'MySubject', 'Here my text', files=['./tintin.jpg'])
 
 
 print("Aborting testing")
