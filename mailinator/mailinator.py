@@ -1,40 +1,71 @@
 import requests
 from http import HTTPStatus
+import enum
+
+
+class RequestMethod(enum.Enum):
+    GET = "get"
+    POST = "post"
+    PUT = "put"
+    PATCH = "patch"
+    DELETE = "delete"
 
 class Mailinator:
 
     token = None
-    domain = None
 
     __headers = {}
     __base_url = 'https://mailinator.com/api/v2'
 
-    def __init__(self, token, domain):
-        self.domain = domain
+    def __init__(self, token):
         self.token = token
         if self.token is None:
             raise ValueError('Token cannot be None')
 
         self.headers = {'Authorization': self.token}
 
+    def request( self, request_data ):
+        if request_data.method == RequestMethod.GET:
+            response = requests.get(request_data.url, headers=self.headers)
+        elif request_data.method == RequestMethod.POST:
+            response = requests.post(request_data.url, headers=self.headers)
+        elif request_data.method == RequestMethod.PUT:
+            response = requests.put(request_data.url, headers=self.headers)
+        elif request_data.method == RequestMethod.DELETE:
+            response = requests.delete(request_data.url, headers=self.headers)
+        else:
+            raise Exception(f"Method not identified {request_data.method}")
+
+        # Check that response is OK
+        if response.status_code != HTTPStatus.OK:
+            raise Exception("Request returned no ok")
+
+
+        # Handle if deserialization fails
+        try:
+            return response.json()
+        except ValueError:
+            return ''
+
+
     #########################
     ## MESSAGE API
     #########################
 
-    def fetch_inbox(self, inbox):
+    def fetch_inbox(self, domain, inbox):
         if inbox is None:
             raise ValueError('Token cannot be None')
-        url=f'{self.__base_url}/domains/{self.domain}/inboxes/{inbox}?limit=2&sort=descending'
+        url=f'{self.__base_url}/domains/{domain}/inboxes/{inbox}?limit=2&sort=descending'
         response = requests.get(url, headers=self.headers)
         return response.json()
 
-    def fetch_message(self, inbox, message_id):
+    def fetch_message(self, domain, inbox, message_id):
         if inbox is None:
             raise ValueError('inbox cannot be None')
         if message_id is None:
             raise ValueError('inbox cannot be None')
 
-        url=f'{self.__base_url}/domains/{self.domain}/inboxes/{inbox}/messages/{message_id}'
+        url=f'{self.__base_url}/domains/{domain}/inboxes/{inbox}/messages/{message_id}'
         response = requests.get(url, headers=self.headers)
         return response.json()
 
@@ -49,18 +80,18 @@ class Mailinator:
         response = requests.get(url, headers=self.headers)
         return response.json()
 
-    def fetch_message_list_attachments(self, inbox, message_id):
+    def fetch_message_list_attachments(self, domain, inbox, message_id):
         if inbox is None:
             raise ValueError('inbox cannot be None')
         if message_id is None:
             raise ValueError('inbox cannot be None')
 
-        url=f'{self.__base_url}/domains/{self.domain}/inboxes/{inbox}/messages/{message_id}/attachments'
+        url=f'{self.__base_url}/domains/{domain}/inboxes/{inbox}/messages/{message_id}/attachments'
         response = requests.get(url, headers=self.headers)
         return response.json()
 
-    def fetch_message_attachment(self, inbox, message_id, attachment_id, output_filename):
-        url=f'https://mailinator.com/api/v2/domains/{self.domain}/inboxes/{inbox}/messages/{message_id}/attachments/{attachment_id}'
+    def fetch_message_attachment(self, domain, inbox, message_id, attachment_id, output_filename):
+        url=f'https://mailinator.com/api/v2/domains/{domain}/inboxes/{inbox}/messages/{message_id}/attachments/{attachment_id}'
         response = requests.get(url, headers=self.headers)
         # print(" ", response.content)
         # json_data = json.loads(response.text)
@@ -70,24 +101,23 @@ class Mailinator:
                 if chunk: # filter out keep-alive new chunks
                     f.write(chunk)
 
-    def delete_message(self, inbox, message_id):
+    def delete_message(self, domain, inbox, message_id):
         
         if inbox is None:
             raise ValueError('INBOX cannot be None')
         # Delete inbox
-        url=f'{self.__base_url}/{self.domain}/inboxes/{inbox}/messages/{message_id}'
+        url=f'{self.__base_url}/{domain}/inboxes/{inbox}/messages/{message_id}'
         requests.delete(url, headers=self.headers)
 
-    def delete_inbox(self, inbox):
+    def delete_inbox(self, domain, inbox):
         if inbox is None:
             raise ValueError('INBOX cannot be None')
         # Delete inbox
-        url=f'{self.__base_url}/{self.domain}/inboxes/{inbox}'
+        url=f'{self.__base_url}/{domain}/inboxes/{inbox}'
         requests.delete(url, headers=self.headers)
 
-
-    def delete_domain(self):
-        url=f'{self.__base_url}/{self.domain}/inboxes'
+    def delete_domain(self, domain):
+        url=f'{self.__base_url}/{domain}/inboxes'
         requests.delete(url, headers=self.headers)
 
     #########################
@@ -108,33 +138,32 @@ class Mailinator:
     ## RULES API
     #########################
 
-    def create_rule(self, data):
-        url=f'{self.__base_url}/domains/{self.domain}/rules/'
+    def create_rule(self, domain, data):
+        url=f'{self.__base_url}/domains/{domain}/rules/'
         response = requests.post(url, json=data, headers=self.headers)
         return response.json()
 
-
-    def enable_rule(self, id):
-        url=f'{self.__base_url}/domains/{self.domain}/rules/{id}?action=enable'
+    def enable_rule(self, domain, id):
+        url=f'{self.__base_url}/domains/{domain}/rules/{id}?action=enable'
         response = requests.put(url, headers=self.headers)
         return response.status_code == HTTPStatus.OK
 
-    def disable_rule(self, id):
-        url=f'{self.__base_url}/domains/{self.domain}/rules/{id}?action=enable'
+    def disable_rule(self, domain, id):
+        url=f'{self.__base_url}/domains/{domain}/rules/{id}?action=enable'
         response = requests.put(url, headers=self.headers)
         return response.status_code == HTTPStatus.OK
 
-    def get_all_rules(self):
-        url=f'{self.__base_url}/domains/{self.domain}/rules/'
+    def get_all_rules(self, domain):
+        url=f'{self.__base_url}/domains/{domain}/rules/'
         response = requests.get(url, headers=self.headers)
         return response.json()
     
-    def get_rule(self, id):
-        url=f'{self.__base_url}/domains/{self.domain}/rules/{id}'
+    def get_rule(self, domain, id):
+        url=f'{self.__base_url}/domains/{domain}/rules/{id}'
         response = requests.get(url, headers=self.headers)
         return response.json()
     
-    def delete_rule(self, id):
-        url=f'{self.__base_url}/domains/{self.domain}/rules/{id}'
+    def delete_rule(self, domain, id):
+        url=f'{self.__base_url}/domains/{domain}/rules/{id}'
         response = requests.delete(url, headers=self.headers)
         return response.json()

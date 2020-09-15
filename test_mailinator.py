@@ -65,7 +65,7 @@ def send_mail(send_from, send_to, subject, text, files=None):
 
 class TestClass:
 
-    mailinator = Mailinator(API_TOKEN, DOMAIN)
+    mailinator = Mailinator(API_TOKEN)
 
     # @classmethod
     # def setup_class(cls):
@@ -105,6 +105,7 @@ class TestClass:
     def test_fetch_inbox(self):
         logger.info("+++ test_fetch_inbox +++")
 
+
         # Send email
         ##
         # send_mail('storrellas@gmail.com', ['test1@storrellasteam.m8r.co'], \
@@ -113,7 +114,7 @@ class TestClass:
         # time.sleep(6)
 
         # Fetch Inbox
-        response = self.mailinator.fetch_inbox(INBOX)
+        response = self.mailinator.fetch_inbox(DOMAIN, INBOX)
         print(response)
         assert len(response['msgs']) == 1
 
@@ -123,11 +124,11 @@ class TestClass:
 
 
         # Fetch message
-        response = self.mailinator.fetch_message(INBOX, message_id)
+        response = self.mailinator.fetch_message(DOMAIN, INBOX, message_id)
         print(response['origfrom'])
 
         # Fetch message list attachments
-        response = self.mailinator.fetch_message_list_attachments(INBOX, message_id)
+        response = self.mailinator.fetch_message_list_attachments(DOMAIN, INBOX, message_id)
         print(response)
 
         # Get attachment_id
@@ -136,14 +137,14 @@ class TestClass:
         attachment_filename = attachment['filename']
 
         # Fetch message list attachments
-        response = self.mailinator.fetch_message_attachment(INBOX, message_id, \
+        response = self.mailinator.fetch_message_attachment(DOMAIN, INBOX, message_id, \
                                                     attachment_id, './tintin_output.jpg')
         print(response)
 
         # Delete inbox for user
-        # self.mailinator.delete_message(INBOX, message_id)
-        # self.mailinator.delete_inbox(INBOX)
-        # self.mailinator.delete_domain()
+        # self.mailinator.delete_message(DOMAIN, INBOX, message_id)
+        # self.mailinator.delete_inbox(DOMAIN, INBOX)
+        # self.mailinator.delete_domain(DOMAIN)
 
 
     def test_fetch_sms_inbox(self):
@@ -199,26 +200,26 @@ class TestClass:
                 }
             ]
         }
-        response = self.mailinator.create_rule(data)
+        response = self.mailinator.create_rule(DOMAIN, data)
         print(response)
 
         # Get all Rules
-        response = self.mailinator.get_all_rules()
+        response = self.mailinator.get_all_rules(DOMAIN)
 
         # Get rule_id
         rule = response['rules'][0]
         rule_id = rule['_id']
 
         # Get rule
-        response = self.mailinator.get_rule(rule_id)
+        response = self.mailinator.get_rule(DOMAIN, rule_id)
         print(response)
 
         # Enable Rule
-        assert self.mailinator.enable_rule(rule_id) == True
+        assert self.mailinator.enable_rule(DOMAIN, rule_id) == True
 
         # Disable Rule
-        assert self.mailinator.disable_rule(rule_id) == True
+        assert self.mailinator.disable_rule(DOMAIN, rule_id) == True
 
         # Delete Rule
-        response = self.mailinator.delete_rule(rule_id)
+        response = self.mailinator.delete_rule(DOMAIN, rule_id)
         print(response)
