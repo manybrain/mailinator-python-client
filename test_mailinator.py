@@ -9,6 +9,7 @@ from email.utils import COMMASPACE, formatdate
 
 
 # Project includes
+from mailinator import *
 from utils import get_logger
 logger = get_logger()
 
@@ -59,82 +60,6 @@ def send_mail(send_from, send_to, subject, text, files=None):
     print(response)
     # Close SMTP connection
     smtp.close()
-
-
-class Mailinator:
-
-    token = None
-    domain = None
-
-    __headers = {}
-    __base_url = 'https://mailinator.com/api/v2'
-
-    def __init__(self, token, domain):
-        self.domain = domain
-        self.token = token
-        if self.token is None:
-            raise ValueError('Token cannot be None')
-
-        self.headers = {'Authorization': self.token}
-
-    def fetch_inbox(self, inbox):
-        if inbox is None:
-            raise ValueError('Token cannot be None')
-        url=f'{self.__base_url}/domains/{self.domain}/inboxes/{inbox}?limit=2&sort=descending'
-        response = requests.get(url, headers=self.headers)
-        return response.json()
-
-    def fetch_message(self, inbox, message_id):
-        if inbox is None:
-            raise ValueError('inbox cannot be None')
-        if message_id is None:
-            raise ValueError('inbox cannot be None')
-
-        url=f'{self.__base_url}/domains/{self.domain}/inboxes/{inbox}/messages/{message_id}'
-        response = requests.get(url, headers=self.headers)
-        return response.json()
-
-
-    def fetch_sms_inbox(self, sms_inbox, sms_team_number):
-        if sms_inbox is None:
-            raise ValueError('sms_inbox cannot be None')
-        if sms_team_number is None:
-            raise ValueError('sms_team_member cannot be None')
-
-        url=f'{self.__base_url}/domains/{sms_inbox}/inboxes/{sms_team_number}'
-        response = requests.get(url, headers=self.headers)
-        return response.json()
-
-    def fetch_message_list_attachments(self, inbox, message_id):
-        if inbox is None:
-            raise ValueError('inbox cannot be None')
-        if message_id is None:
-            raise ValueError('inbox cannot be None')
-
-        url=f'{self.__base_url}/domains/{self.domain}/inboxes/{inbox}/messages/{message_id}/attachments'
-        response = requests.get(url, headers=self.headers)
-        return response.json()
-
-    def fetch_message_attachment(self, inbox, message_id, attachment_id, output_filename):
-        url=f'https://mailinator.com/api/v2/domains/{DOMAIN}/inboxes/{INBOX}/messages/{message_id}/attachments/{attachment_id}'
-        response = requests.get(url, headers=self.headers)
-        # print(" ", response.content)
-        # json_data = json.loads(response.text)
-
-        with open(output_filename, 'wb') as f:
-            for chunk in response.iter_content(chunk_size=1024): 
-                if chunk: # filter out keep-alive new chunks
-                    f.write(chunk)
-
-    def delete_inbox(self, inbox):
-        if inbox is None:
-            raise ValueError('INBOX cannot be None')
-        # Delete inbox
-        requests.delete(f'https://mailinator.com/api/v2/domains/{self.domain}/inboxes/{inbox}', headers=self.headers)
-
-
-    def delete_domain(self):
-        requests.delete(f'https://mailinator.com/api/v2/domains/{self.domain}/inboxes', headers=self.headers)
 
         
 
@@ -215,24 +140,39 @@ class TestClass:
                                                     attachment_id, './tintin_output.jpg')
         print(response)
 
+        # Delete inbox for user
+        # self.mailinator.delete_message(INBOX, message_id)
+        # self.mailinator.delete_inbox(INBOX)
+        # self.mailinator.delete_domain()
 
-    # def test_fetch_sms_inbox(self):
-    #     logger.info("+++ test_fetch_sms_inbox +++")
 
-    #     # Fetch SMS Message
-    #     SMS_INBOX = 'public'
-    #     SMS_TEAM_NUMBER = '12013814330'
+    def test_fetch_sms_inbox(self):
+        logger.info("+++ test_fetch_sms_inbox +++")
 
-    #     # Get SMS INBOX
-    #     response = self.mailinator.fetch_sms_inbox(SMS_INBOX, SMS_TEAM_NUMBER)
-    #     print(response)
+        # Fetch SMS Message
+        SMS_INBOX = 'public'
+        SMS_TEAM_NUMBER = '12013814330'
 
-    #     # # Delete inbox for user
-    #     # response = self.mailinator.delete_inbox(INBOX)
+        # Get SMS INBOX
+        response = self.mailinator.fetch_sms_inbox(SMS_INBOX, SMS_TEAM_NUMBER)
+        print(response)
 
-    #     # # Check inbox is empty
-    #     # response = self.mailinator.fetch_inbox(INBOX)
-    #     # assert len(response['msgs']) == 0
+
+    def test_domains(self):
+        logger.info("+++ test_domains +++")
+
+        # Domain id
+        response = self.mailinator.get_all_domains()
+        print(response)
+
+        # Get domain_id
+        domain = response['domains'][0]
+        domain_id = domain['_id']
+        
+        response = self.mailinator.get_domain(domain_id)
+        print(response)
+
+
 
     # # def test_delete_domain(self):
     # #     logger.info("+++ test_delete_domain +++")
