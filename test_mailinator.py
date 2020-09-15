@@ -149,9 +149,7 @@ class TestClass:
     def test_fetch_sms_inbox(self):
         logger.info("+++ test_fetch_sms_inbox +++")
 
-        # Fetch SMS Message
-        SMS_DOMAIN = 'public'
-        SMS_PHONE_NUMBER = '12013814330'
+
 
         # Fetch Inbox
         response = self.mailinator.request( GetSmsInboxRequest(SMS_DOMAIN, SMS_PHONE_NUMBER) )

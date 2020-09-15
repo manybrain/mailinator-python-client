@@ -31,11 +31,17 @@ class RequestData:
 #########################
 
 class GetInboxRequest(RequestData):
-    def __init__(self, domain, inbox):
+    def __init__(self, domain, inbox, skip=0, limit=50, sort='descending', \
+            decode_subject=False):
         self.check_parameter(domain, 'domain')
         self.check_parameter(inbox, 'inbox')
 
-        url=f'{self._base_url}/domains/{domain}/inboxes/{inbox}?limit=2&sort=descending'
+        url=f'{self._base_url}/domains/{domain}/inboxes/{inbox}?'
+        url = url + (f'skip={skip}' if skip is not None else '')
+        url = url + (f'&limit={limit}' if limit is not None else '')
+        url = url + (f'&sort={sort}' if sort is not None else '')
+        url = url + (f'&decode_subject={decode_subject}' if decode_subject is not None else '')
+        print("url ", url)
         super().__init__(RequestMethod.GET, url)
 
 class GetMessageRequest(RequestData):
