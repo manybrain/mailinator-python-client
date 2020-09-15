@@ -1,4 +1,5 @@
 import requests
+from http import HTTPStatus
 
 class Mailinator:
 
@@ -94,12 +95,46 @@ class Mailinator:
     #########################
 
     def get_all_domains(self):
-        response = requests.get(f'https://api.mailinator.com/v2/domains/', headers=self.headers)
-        print("response ", response.text)
-        print("response ", response.content)
-        print("response ", response.status_code)
+        url=f'{self.__base_url}/domains/'
+        response = requests.get(url, headers=self.headers)
         return response.json()
 
     def get_domain(self, id):
-        response = requests.get(f'https://api.mailinator.com/v2/domains/{id}', headers=self.headers)
+        url=f'{self.__base_url}/domains/{id}'
+        response = requests.get(url, headers=self.headers)
+        return response.json()
+
+    #########################
+    ## RULES API
+    #########################
+
+    def create_rule(self, data):
+        url=f'{self.__base_url}/domains/{self.domain}/rules/'
+        response = requests.post(url, json=data, headers=self.headers)
+        return response.json()
+
+
+    def enable_rule(self, id):
+        url=f'{self.__base_url}/domains/{self.domain}/rules/{id}?action=enable'
+        response = requests.put(url, headers=self.headers)
+        return response.status_code == HTTPStatus.OK
+
+    def disable_rule(self, id):
+        url=f'{self.__base_url}/domains/{self.domain}/rules/{id}?action=enable'
+        response = requests.put(url, headers=self.headers)
+        return response.status_code == HTTPStatus.OK
+
+    def get_all_rules(self):
+        url=f'{self.__base_url}/domains/{self.domain}/rules/'
+        response = requests.get(url, headers=self.headers)
+        return response.json()
+    
+    def get_rule(self, id):
+        url=f'{self.__base_url}/domains/{self.domain}/rules/{id}'
+        response = requests.get(url, headers=self.headers)
+        return response.json()
+    
+    def delete_rule(self, id):
+        url=f'{self.__base_url}/domains/{self.domain}/rules/{id}'
+        response = requests.delete(url, headers=self.headers)
         return response.json()

@@ -173,19 +173,52 @@ class TestClass:
         print(response)
 
 
+    def test_rules(self):
+        logger.info("+++ test_rules +++")
 
-    # # def test_delete_domain(self):
-    # #     logger.info("+++ test_delete_domain +++")
+        # Create Rule
+        data = {
+            "description": "Rule to post all incoming mail starting with test* to my webhook",
+            "enabled": True,
+            "name": "testprefixpost",
+            "conditions": [
+                {
+                    "operation": "PREFIX",
+                    "condition_data": {
+                        "field": "to",
+                        "value": "test"
+                    }
+                }
+            ],
+            "actions": [
+                {
+                    "action": "WEBHOOK",
+                    "action_data": {
+                        "url": "https://www.mywebsite.com/restendpoint"
+                    }
+                }
+            ]
+        }
+        response = self.mailinator.create_rule(data)
+        print(response)
 
-    # #     # Send email
-    # #     ##
-    # #     send_mail('sergi@mail.com', ['user1@storrellasteam.m8r.co'], \
-    # #                 'MySubject', 'Here my text')
-    # #     send_mail('sergi@mail.com', ['user2@storrellasteam.m8r.co'], \
-    # #                 'MySubject', 'Here my text')                    
-    # #     # Wait three secs until email is processed
-    # #     time.sleep(3)
+        # Get all Rules
+        response = self.mailinator.get_all_rules()
 
-    # #     # Fetch Inbox
-    # #     response = self.mailinator.fetch_inbox(INBOX)
-    # #     assert len(response['msgs']) == 2
+        # Get rule_id
+        rule = response['rules'][0]
+        rule_id = rule['_id']
+
+        # Get rule
+        response = self.mailinator.get_rule(rule_id)
+        print(response)
+
+        # Enable Rule
+        assert self.mailinator.enable_rule(rule_id) == True
+
+        # Disable Rule
+        assert self.mailinator.disable_rule(rule_id) == True
+
+        # Delete Rule
+        response = self.mailinator.delete_rule(rule_id)
+        print(response)
