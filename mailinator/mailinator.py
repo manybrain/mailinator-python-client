@@ -17,6 +17,10 @@ class RequestData:
     url = None
     json = None
 
+    def check_parameter(self, parameter, name):
+        if parameter is None:
+            raise ValueError(f'{name} cannot be None')
+
     def __init__(self, method, url, json=None):
         self.method = method
         self.url = url
@@ -28,81 +32,68 @@ class RequestData:
 
 class GetInboxRequest(RequestData):
     def __init__(self, domain, inbox):
-        if domain is None:
-            raise ValueError('domain cannot be None')
-        if inbox is None:
-            raise ValueError('inbox cannot be None')
-
+        self.check_parameter(domain, 'domain')
+        self.check_parameter(inbox, 'inbox')
 
         url=f'{self._base_url}/domains/{domain}/inboxes/{inbox}?limit=2&sort=descending'
         super().__init__(RequestMethod.GET, url)
 
 class GetMessageRequest(RequestData):
     def __init__(self, domain, inbox, message_id):
-        if domain is None:
-            raise ValueError('domain cannot be None')
-        if inbox is None:
-            raise ValueError('inbox cannot be None')
-        if message_id is None:
-            raise ValueError('message_id cannot be None')
+        self.check_parameter(domain, 'domain')
+        self.check_parameter(inbox, 'inbox')
+        self.check_parameter(message_id, 'message_id')
 
         url=f'{self._base_url}/domains/{domain}/inboxes/{inbox}/messages/{message_id}'
         super().__init__(RequestMethod.GET, url)
 
 class GetSmsInboxRequest(RequestData):
     def __init__(self, domain, phone_number):
-        if domain is None:
-            raise ValueError('domain cannot be None')
-        if phone_number is None:
-            raise ValueError('phone_number cannot be None')
-
+        self.check_parameter(domain, 'domain')
+        self.check_parameter(phone_number, 'phone_number')
 
         url=f'{self._base_url}/domains/{domain}/inboxes/{phone_number}'
         super().__init__(RequestMethod.GET, url)
 
 class GetAttachmentsRequest(RequestData):
     def __init__(self, domain, inbox, message_id):
-        if domain is None:
-            raise ValueError('domain cannot be None')
-        if inbox is None:
-            raise ValueError('inbox cannot be None')
-        if message_id is None:
-            raise ValueError('message_id cannot be None')
-
+        self.check_parameter(domain, 'domain')
+        self.check_parameter(inbox, 'inbox')
+        self.check_parameter(message_id, 'message_id')
+        
         url=f'{self._base_url}/domains/{domain}/inboxes/{inbox}/messages/{message_id}/attachments'
         super().__init__(RequestMethod.GET, url)
 
 class GetAttachmentRequest(RequestData):
     def __init__(self, domain, inbox, message_id, attachment_id):
+        self.check_parameter(domain, 'domain')
+        self.check_parameter(inbox, 'inbox')
+        self.check_parameter(message_id, 'message_id')
+        self.check_parameter(attachment_id, 'attachment_id')
+
         url=f'{self._base_url}/domains/{domain}/inboxes/{inbox}/messages/{message_id}/attachments/{attachment_id}'
         super().__init__(RequestMethod.GET, url)
 
 class DeleteDomainMessagesRequest(RequestData):
     def __init__(self, domain):
-        if domain is None:
-            raise ValueError('domain cannot be None')
+        self.check_parameter(domain, 'domain')
 
         url=f'{self._base_url}/domains/{domain}/inboxes'
         super().__init__(RequestMethod.DELETE, url)
 
 class DeleteInboxMessagesRequest(RequestData):
     def __init__(self, domain, inbox):
-        if domain is None:
-            raise ValueError('domain cannot be None')
-        if inbox is None:
-            raise ValueError('inbox cannot be None')
-
+        self.check_parameter(domain, 'domain')
+        self.check_parameter(inbox, 'inbox')
+        
         url=f'{self._base_url}/domains/{domain}/inboxes/{inbox}'
         super().__init__(RequestMethod.DELETE, url)
 
 class DeleteMessageRequest(RequestData):
     def __init__(self, domain, inbox, message_id):
-        if domain is None:
-            raise ValueError('domain cannot be None')
-        if inbox is None:
-            raise ValueError('inbox cannot be None')
-        if message_id is None:
-            raise ValueError('message_id cannot be None')
+        self.check_parameter(domain, 'domain')
+        self.check_parameter(inbox, 'inbox')
+        self.check_parameter(message_id, 'message_id')
 
         url=f'{self._base_url}/domains/{domain}/inboxes/{inbox}/messages/{message_id}'
         super().__init__(RequestMethod.DELETE, url)
@@ -118,11 +109,64 @@ class GetDomainsRequest(RequestData):
 
 class GetDomainRequest(RequestData):
     def __init__(self, domain):
-        if domain is None:
-            raise ValueError('domain cannot be None')
+        self.check_parameter(domain, 'domain')
+
 
         url=f'{self._base_url}/domains/{domain}/'
         super().__init__(RequestMethod.GET, url)
+
+#########################
+## RULES API
+#########################
+
+
+class CreateRuleRequest(RequestData):
+    def __init__(self, domain, data):
+        self.check_parameter(domain, 'domain')
+
+        url=f'{self._base_url}/domains/{domain}/rules/'
+        super().__init__(RequestMethod.POST, url, data)
+
+class EnableRuleRequest(RequestData):
+    def __init__(self, domain, rule_id):
+        self.check_parameter(domain, 'domain')
+        self.check_parameter(rule_id, 'rule_id')
+
+        url=f'{self._base_url}/domains/{domain}/rules/{rule_id}?action=enable'
+        super().__init__(RequestMethod.PUT, url)
+
+class DisableRuleRequest(RequestData):
+    def __init__(self, domain, rule_id):
+        self.check_parameter(domain, 'domain')
+        self.check_parameter(rule_id, 'rule_id')
+
+        url=f'{self._base_url}/domains/{domain}/rules/{rule_id}?action=enable'
+        super().__init__(RequestMethod.PUT, url)
+
+class GetRulesRequest(RequestData):
+    def __init__(self, domain):
+        self.check_parameter(domain, 'domain')
+
+        url=f'{self._base_url}/domains/{domain}/rules/'
+        super().__init__(RequestMethod.GET, url)
+
+class GetRuleRequest(RequestData):
+    def __init__(self, domain, rule_id):
+        self.check_parameter(domain, 'domain')
+        self.check_parameter(rule_id, 'rule_id')
+
+        url=f'{self._base_url}/domains/{domain}/rules/{rule_id}'
+        super().__init__(RequestMethod.GET, url)
+
+class DeleteRuleRequest(RequestData):
+    def __init__(self, domain, rule_id):
+        self.check_parameter(domain, 'domain')
+        self.check_parameter(rule_id, 'rule_id')
+
+        url=f'{self._base_url}/domains/{domain}/rules/{rule_id}'
+        super().__init__(RequestMethod.DELETE, url)
+
+
 
 class Mailinator:
 

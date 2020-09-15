@@ -117,7 +117,6 @@ class TestClass:
 
         # Get Message
         response = self.mailinator.request( GetMessageRequest(DOMAIN, INBOX, message_id) )
-        #print("get message", response)
 
         # Get Attachements list
         response = self.mailinator.request( GetAttachmentsRequest(DOMAIN, INBOX, message_id) )
@@ -202,26 +201,27 @@ class TestClass:
                 }
             ]
         }
-        response = self.mailinator.create_rule(DOMAIN, data)
+        response = self.mailinator.request( CreateRuleRequest(DOMAIN, data) )
         print(response)
 
         # Get all Rules
-        response = self.mailinator.get_all_rules(DOMAIN)
+        response = self.mailinator.request( GetRulesRequest(DOMAIN) )
 
         # Get rule_id
         rule = response['rules'][0]
         rule_id = rule['_id']
 
         # Get rule
-        response = self.mailinator.get_rule(DOMAIN, rule_id)
+        response = self.mailinator.request( GetRulesRequest(DOMAIN) )
         print(response)
 
         # Enable Rule
         assert self.mailinator.enable_rule(DOMAIN, rule_id) == True
 
+
         # Disable Rule
         assert self.mailinator.disable_rule(DOMAIN, rule_id) == True
 
         # Delete Rule
-        response = self.mailinator.delete_rule(DOMAIN, rule_id)
+        response = self.mailinator.request( DeleteRuleRequest(DOMAIN, rule_id) )
         print(response)
