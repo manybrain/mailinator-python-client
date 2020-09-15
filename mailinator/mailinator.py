@@ -213,37 +213,3 @@ class Mailinator:
         else:
             return response
 
-
-    #########################
-    ## RULES API
-    #########################
-
-    def create_rule(self, domain, data):
-        url=f'{self.__base_url}/domains/{domain}/rules/'
-        response = requests.post(url, json=data, headers=self.headers)
-        return response.json()
-
-    def enable_rule(self, domain, id):
-        url=f'{self.__base_url}/domains/{domain}/rules/{id}?action=enable'
-        response = requests.put(url, headers=self.headers)
-        return response.status_code == HTTPStatus.OK
-
-    def disable_rule(self, domain, id):
-        url=f'{self.__base_url}/domains/{domain}/rules/{id}?action=enable'
-        response = requests.put(url, headers=self.headers)
-        return response.status_code == HTTPStatus.OK
-
-    def get_all_rules(self, domain):
-        url=f'{self.__base_url}/domains/{domain}/rules/'
-        response = requests.get(url, headers=self.headers)
-        return response.json()
-    
-    def get_rule(self, domain, id):
-        url=f'{self.__base_url}/domains/{domain}/rules/{id}'
-        response = requests.get(url, headers=self.headers)
-        return response.json()
-    
-    def delete_rule(self, domain, id):
-        url=f'{self.__base_url}/domains/{domain}/rules/{id}'
-        response = requests.delete(url, headers=self.headers)
-        return response.json()
