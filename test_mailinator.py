@@ -209,19 +209,20 @@ class TestClass:
                 }
             ]
         }
-        conditions = [Condition(operation=Condition.OperationType.PREFIX, field="test", value="test")]
+        conditions = [Condition(operation=Condition.OperationType.PREFIX, field="to", value="test")]
         actions = [Action(action=Action.ActionType.DROP, action_data=Action.ActionData("https://www.mywebsite.com/restendpoint"))]
-        Rule(description="mydescription", enabled=True, name="MyName", conditions=conditions, actions=actions)
+        rule = Rule(description="mydescription", enabled=True, name="MyName", conditions=conditions, actions=actions)
 
 
-        response = self.mailinator.request( CreateRuleRequest(DOMAIN, data) )
+        response = self.mailinator.request( CreateRuleRequest(DOMAIN, rule.to_json() ) )
         print(response)
+
 
         # Get all Rules
         response = self.mailinator.request( GetRulesRequest(DOMAIN) )
 
         rules = Rules(**response)
-        print("Sergi Rules", rules.__dict__)
+        print("Rules ", rules.__dict__)
 
         # Get rule_id
         rule = response['rules'][0]
@@ -231,10 +232,8 @@ class TestClass:
         response = self.mailinator.request( GetRuleRequest(DOMAIN, rule_id) )
         print(response)
 
-        print("ResponseToRuleRequest ", response)
-
         rule = Rule(**response)
-        print("Sergi Rules", rule.__dict__)
+        print("Getting Rules", rule.__dict__)
 
         # Enable Rule
         self.mailinator.request( EnableRuleRequest(DOMAIN, rule_id) )

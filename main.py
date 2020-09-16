@@ -7,10 +7,32 @@ import sys
 from mailinator import *
 
 conditions = [Condition(operation=Condition.OperationType.PREFIX, field="test", value="test")]
+
+
+
 actions = [Action(action=Action.ActionType.DROP, action_data=Action.ActionData("https://www.mywebsite.com/restendpoint"))]
-rule = Rule(description="mydescription", enabled=True, name="MyName", conditions=conditions, actions=actions)
-print( rule )
-print( rule )
+rule = Rule(match_type=Rule.MatchType.ALL, description="mydescription", enabled=True, name="MyName", actions=actions, conditions=conditions)
+
+
+print("conditions ", type(conditions))
+print("conditions ", type(conditions[0]))
+print("rule ", type(rule.conditions))
+print("rule ", type(rule.conditions[0]))
+
+print(rule)
+
+print("ToJSON")
+print( rule.to_json())
+print("ToJSON")
+print()
+print()
+print( rule.to_json())
+
+# print( "Dumps ", json.dumps( rule.to_json() ) )
+# print( "Dumps ", json.dumps( rule.to_json() ) )
+
+
+# print( json.dumps(rule.to_json() ) )
 
 sys.exit(0)
 
