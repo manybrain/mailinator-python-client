@@ -8,7 +8,7 @@ import enum
 
 class Condition:
 
-    class OperationType:
+    class OperationType(enum.Enum):
         EQUALS = "EQUALS"
         PREFIX = "PREFIX"
 
@@ -18,7 +18,7 @@ class Condition:
 
     def __init__(self, operation=OperationType.EQUALS, field=None, \
                     value=None, *args, **kwargs):
-        self.operation = operation 
+        self.operation = operation or self.OperationType.EQUALS
         self.field = field
         self.value = value
         if 'condition_data' in kwargs:
@@ -31,6 +31,7 @@ class Condition:
     def to_json(self):
         ret_val = self.__dict__.copy()
 
+        ret_val['operation'] = self.operation.value
         ret_val.pop('field')
         ret_val.pop('value')
         ret_val['condition_data'] = {
@@ -44,7 +45,7 @@ class Condition:
 
 class Action:
 
-    class ActionType:
+    class ActionType(enum.Enum):
         WEBHOOK = "WEBHOOK"
         DROP = "DROP"
 
@@ -63,7 +64,7 @@ class Action:
     def __init__(self, action=ActionType.DROP, \
                 action_data=None, destination=None, \
                 *args, **kwargs):
-        self.action = action
+        self.action = action or self.ActionType.DROP
         self.destination = destination
         if action_data is not None:
             self.action_data = action_data \
@@ -76,6 +77,7 @@ class Action:
 
     def to_json(self):
         ret_val = self.__dict__.copy()
+        ret_val['action'] = self.action.value
         ret_val['action_data'] = self.action_data.to_json()
         if ret_val['destination'] is None:
             ret_val.pop('destination')
@@ -85,7 +87,7 @@ class Action:
 ##
 
 class Rule:
-    class MatchType:
+    class MatchType(enum.Enum):
         ANY = "ANY"
         ALL = "ALL"
         ALWAYS_MATCH = "ALWAYS_MATCH"
@@ -93,47 +95,37 @@ class Rule:
         def __str__(self):
             return str(self.value)
 
-    _id = None
-    description = None
-    enabled = None
-    match_type = None
-    name = None
-    priority = 0
-    conditions = []
-    actions = []
+
     
     def __init__(self, _id=None, description=None, enabled=False,
             match_type=MatchType.ANY, name=None, priority=0, \
-            conditions=None, actions=None, \
+            conditions=[], actions=[], \
             *args, **kwargs):
         self._id = _id
-        self.description = description
-        self.enabled = enabled
+        self.description = description or ''
+        self.enabled = enabled or False
 
-        # Create Match Type     
-        self.match_type = match_type
+        # Create Match Type
+        self.match_type = match_type or self.MatchType.ANY
 
 
-        self.name = name
-        self.priority = priority
+        self.name = name or ''
+        self.priority = priority or 0
         # Conditions
         if conditions is not None:
             self.conditions = conditions if isinstance(conditions[0], Condition) \
                         else [Condition(**k) for k in conditions ]
-        else:
-            self.conditions = []
         # Actions
         if actions is not None:
             self.actions = actions if isinstance(actions[0], Action) \
                                 else [Action(**k) for k in actions ]
-        else:
-            self.actions = []
 
 
     def to_json(self):       
         ret_val = self.__dict__.copy()
         if self._id is None and '_id' in ret_val:
             ret_val.pop( '_id' )
+        ret_val['match_type'] = self.match_type.value
         ret_val['conditions'] = [condition.to_json() for condition in self.conditions]
         ret_val['actions'] = [action.to_json() for action in self.actions]
         return ret_val

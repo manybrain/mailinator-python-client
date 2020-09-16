@@ -6,12 +6,12 @@ import sys
 
 from mailinator import *
 
-conditions = [Condition(operation=Condition.OperationType.PREFIX, field="test", value="test")]
+conditions = [Condition(operation=Condition.OperationType.EQUALS, field="test", value="test")]
 
 
 
-actions = [Action(action=Action.ActionType.DROP, action_data=Action.ActionData("https://www.mywebsite.com/restendpoint"))]
-rule = Rule(match_type=Rule.MatchType.ALL, description="mydescription", enabled=True, name="MyName", actions=actions, conditions=conditions)
+actions = [Action(action=Action.ActionType.WEBHOOK, action_data=Action.ActionData("https://www.mywebsite.com/restendpoint"))]
+rule = Rule(match_type=None, description="mydescription", enabled=True, name="MyName", actions=actions, conditions=conditions)
 
 
 print("conditions ", type(conditions))
@@ -27,9 +27,6 @@ print("ToJSON")
 print()
 print()
 print( rule.to_json())
-
-# print( "Dumps ", json.dumps( rule.to_json() ) )
-# print( "Dumps ", json.dumps( rule.to_json() ) )
 
 
 # print( json.dumps(rule.to_json() ) )
