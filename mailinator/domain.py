@@ -1,5 +1,7 @@
 from .base import RequestData, RequestMethod
 
+
+
 class GetDomainsRequest(RequestData):
     def __init__(self):
         url=f'{self._base_url}/domains'

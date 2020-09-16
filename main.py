@@ -3,6 +3,17 @@ import json
 import sys
 
 
+
+from mailinator import *
+
+conditions = [Condition(operation=Condition.OperationType.PREFIX, field="test", value="test")]
+actions = [Action(action=Action.ActionType.DROP, action_data=Action.ActionData("https://www.mywebsite.com/restendpoint"))]
+rule = Rule(description="mydescription", enabled=True, name="MyName", conditions=conditions, actions=actions)
+print( rule )
+print( rule )
+
+sys.exit(0)
+
 # Import localsettings if any
 try:
     from localsettings import *
