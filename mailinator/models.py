@@ -5,6 +5,8 @@ class BaseModel:
     def __str__(self):
         return str(self.__dict__.copy())   
 
+    def to_json(self):
+        return str(self.__dict__.copy())  
 
 ## Condition
 ##
@@ -91,7 +93,7 @@ class Rule(BaseModel):
             match_type=MatchType.ANY, name=None, priority=0, \
             conditions=[], actions=[], \
             *args, **kwargs):
-        self._id = _id
+        self._id = _id or None
         self.description = description or ''
         self.enabled = enabled or False
 
@@ -135,7 +137,7 @@ class Rules(BaseModel):
 ## Domain
 ##
 
-class Domain:
+class Domain(BaseModel):
 
     def __init__(self, _id=None, description=None, \
             enabled=None, name=None, ownerid=None, rules=None, \
@@ -152,8 +154,13 @@ class Domain:
     def __str__(self):
         return str(self.__dict__.copy())
 
+    def to_json(self):       
+        ret_val = self.__dict__.copy()
+        ret_val['rules'] = [rules.to_json() for rule in self.rules.rules]
+        return ret_val
+
 # NOTE: This is dumb for me
-class Domains:
+class Domains(BaseModel):
 
     def __init__(self, domains=[], *args, **kwargs):
         # Create Domains object
@@ -163,6 +170,11 @@ class Domains:
     
     def __str__(self):
         return str(self.__dict__.copy())
+
+    def to_json(self):       
+        ret_val = self.__dict__.copy()
+        ret_val['domains'] = [domain.to_json() for domain in self.domains]
+        return ret_val
 
 ## Inbox
 ##
@@ -176,6 +188,11 @@ class Inbox(BaseModel):
         self.msgs = msgs if len(msgs)>0 and isinstance(msgs[0], Message) \
                     else [Message(**k) for k in msgs ]
     
+    def to_json(self):       
+        ret_val = self.__dict__.copy()
+        ret_val['msgs'] = [msg.to_json() for msg in self.msgs]
+        return ret_val
+
 class Message(BaseModel):
 
 

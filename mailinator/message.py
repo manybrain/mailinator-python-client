@@ -1,4 +1,5 @@
 from .base import RequestData, RequestMethod
+from .models import *
 
 class GetInboxRequest(RequestData):
     def __init__(self, domain, inbox, skip=0, limit=50, sort='descending', \
@@ -11,7 +12,7 @@ class GetInboxRequest(RequestData):
         url = url + (f'&limit={limit}' if limit is not None else '')
         url = url + (f'&sort={sort}' if sort is not None else '')
         url = url + (f'&decode_subject={decode_subject}' if decode_subject is not None else '')
-        super().__init__(RequestMethod.GET, url)
+        super().__init__(RequestMethod.GET, url, model=Inbox)
 
 class GetMessageRequest(RequestData):
     def __init__(self, domain, inbox, message_id):
@@ -20,7 +21,7 @@ class GetMessageRequest(RequestData):
         self.check_parameter(message_id, 'message_id')
 
         url=f'{self._base_url}/domains/{domain}/inboxes/{inbox}/messages/{message_id}'
-        super().__init__(RequestMethod.GET, url)
+        super().__init__(RequestMethod.GET, url, model=Message)
 
 class GetSmsInboxRequest(RequestData):
     def __init__(self, domain, phone_number):
@@ -28,7 +29,7 @@ class GetSmsInboxRequest(RequestData):
         self.check_parameter(phone_number, 'phone_number')
 
         url=f'{self._base_url}/domains/{domain}/inboxes/{phone_number}'
-        super().__init__(RequestMethod.GET, url)
+        super().__init__(RequestMethod.GET, url, model=Inbox)
 
 class GetAttachmentsRequest(RequestData):
     def __init__(self, domain, inbox, message_id):
@@ -37,7 +38,7 @@ class GetAttachmentsRequest(RequestData):
         self.check_parameter(message_id, 'message_id')
         
         url=f'{self._base_url}/domains/{domain}/inboxes/{inbox}/messages/{message_id}/attachments'
-        super().__init__(RequestMethod.GET, url)
+        super().__init__(RequestMethod.GET, url, model=Attachments)
 
 class GetAttachmentRequest(RequestData):
     def __init__(self, domain, inbox, message_id, attachment_id):

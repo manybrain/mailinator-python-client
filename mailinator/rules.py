@@ -1,11 +1,12 @@
 from .base import RequestData, RequestMethod
+from .models import *
 
 class CreateRuleRequest(RequestData):
     def __init__(self, domain, data):
         self.check_parameter(domain, 'domain')
 
         url=f'{self._base_url}/domains/{domain}/rules/'
-        super().__init__(RequestMethod.POST, url, data)
+        super().__init__(RequestMethod.POST, url, model=Rule, json=data.to_json())
 
 class EnableRuleRequest(RequestData):
     def __init__(self, domain, rule_id):
@@ -28,7 +29,7 @@ class GetRulesRequest(RequestData):
         self.check_parameter(domain, 'domain')
 
         url=f'{self._base_url}/domains/{domain}/rules/'
-        super().__init__(RequestMethod.GET, url)
+        super().__init__(RequestMethod.GET, url, model=Rules)
 
 class GetRuleRequest(RequestData):
     def __init__(self, domain, rule_id):
@@ -38,7 +39,7 @@ class GetRuleRequest(RequestData):
         url=f'{self._base_url}/domains/{domain}/rules/{rule_id}/'
 
         print("URL   ", url)
-        super().__init__(RequestMethod.GET, url)
+        super().__init__(RequestMethod.GET, url, model=Rules)
 
 class DeleteRuleRequest(RequestData):
     def __init__(self, domain, rule_id):

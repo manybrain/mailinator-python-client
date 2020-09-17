@@ -44,9 +44,17 @@ class Mailinator:
         else:
             raise MailinatorException("Request returned no ok")
 
+        
+
         if 'Content-Type' in response.headers and \
             response.headers['Content-Type'] == 'application/json':
-            return response.json()
+            if request_data.model is not None:
+                print("reponse.json() ", response.json())
+                return request_data.model(**response.json())
+            else:
+                return response.json()
+
+            #return response.json()
         else:
             return response
 

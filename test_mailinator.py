@@ -107,48 +107,26 @@ class TestClass:
         logger.info("+++ test_fetch_inbox +++")
 
         # Fetch Inbox
-        response = self.mailinator.request( GetInboxRequest(DOMAIN, INBOX) )
-        print("get inbox ", response)
-        assert len(response['msgs']) == 1
+        inbox = self.mailinator.request( GetInboxRequest(DOMAIN, INBOX) )
+        assert len(inbox.msgs) == 1
 
-        print( "response ", response )
-        print()
-        print()
-
-        inbox = Inbox(**response)
-        print("inbox ", inbox)
-
-        print("Message ", inbox.msgs[0])
+        print( "inbox ", inbox )
+        print( "inbox ", inbox.msgs[0] )
 
         # Get message_id
-        message = response['msgs'][0]
-        message_id = message['id']
-        print("response ", response)
+        message_id = inbox.msgs[0].id
 
-        # # Get Message
-        # response = self.mailinator.request( GetMessageRequest(DOMAIN, INBOX, message_id) )
-
-        # print( "response ", response )
-        # print()
-        # print()
-
-        # message = Message(**response)
-        # print("inbox ", message)
-
+        # Get Message
+        message = self.mailinator.request( GetMessageRequest(DOMAIN, INBOX, message_id) )
 
         # Get Attachements list
-        response = self.mailinator.request( GetAttachmentsRequest(DOMAIN, INBOX, message_id) )
-        print(response)
-
-        attachments = Attachments(**response)
+        attachments = self.mailinator.request( GetAttachmentsRequest(DOMAIN, INBOX, message_id) )
         print("attachments ", attachments)
-        print("attachments ", attachments.attachments[0])
-
 
         # Get attachment_id
-        attachment = response['attachments'][0]
-        attachment_id = attachment['attachment-id']
-        attachment_filename = attachment['filename']
+        attachment = attachments.attachments[0]
+        attachment_id = attachment.attachment_id
+        attachment_filename = attachment.filename
 
         # Get Attachement
         response = self.mailinator.request( GetAttachmentRequest(DOMAIN, INBOX, message_id, attachment_id) )
@@ -162,7 +140,7 @@ class TestClass:
 
 
         # Delete Message Request
-        # response = self.mailinator.request( DeleteDomainMessagesRequest(DOMAIN) )
+        response = self.mailinator.request( DeleteDomainMessagesRequest(DOMAIN) )
         # response = self.mailinator.request( DeleteInboxMessagesRequest(DOMAIN) )        
         # response = self.mailinator.request( DeleteMessageRequest(DOMAIN, INBOX, message_id) )
 
@@ -172,41 +150,36 @@ class TestClass:
         logger.info("+++ test_fetch_sms_inbox +++")
 
         # Fetch Inbox
-        response = self.mailinator.request( GetSmsInboxRequest(SMS_DOMAIN, SMS_PHONE_NUMBER) )
-        print(response)
-
-        print()
-        print()
-        inbox = Inbox(**response)
+        inbox = self.mailinator.request( GetSmsInboxRequest(SMS_DOMAIN, SMS_PHONE_NUMBER) )
         print("inbox ", inbox)
-
-        print("Message ", inbox.msgs[0])
+        print("inbox ", inbox.to_json() )
 
 
     def test_domains(self):
         logger.info("+++ test_domains +++")
 
         # Get doamins
-        response = self.mailinator.request( GetDomainsRequest() )
-        print(response)
+        domains = self.mailinator.request( GetDomainsRequest() )
+        print("domains ", domains)
+        print("domain ", domains.to_json())
 
-        # Generate model
-        #domains = Domains(domains= [Domain(**k) for k in response['domains'] ])
-        domains = Domains(**response)
+        # # Generate model
+        # #domains = Domains(domains= [Domain(**k) for k in response['domains'] ])
+        # domains = Domains(**response)
       
         # Get doamins
-        response = self.mailinator.request( GetDomainRequest(DOMAIN) )
-        print(response)
+        domain = self.mailinator.request( GetDomainRequest(DOMAIN) )
+        print("domain ", domain.to_json())
 
-        # Output results
-        results_json = json.dumps(response, indent=2)
-        #print(json.dumps(results, indent=2))
-        print(results_json)
+        # # Output results
+        # results_json = json.dumps(response, indent=2)
+        # #print(json.dumps(results, indent=2))
+        # print(results_json)
 
-        # Generate model
-        domain = Domain(**response)
+        # # Generate model
+        # domain = Domain(**response)
 
-        print("Domain ", domain)
+        # print("Domain ", domain)
 
 
 
@@ -218,26 +191,18 @@ class TestClass:
         actions = [Action(action=Action.ActionType.DROP, action_data=Action.ActionData("https://www.mywebsite.com/restendpoint"))]
         rule = Rule(description="mydescription", enabled=True, name="MyName", conditions=conditions, actions=actions)
 
-        response = self.mailinator.request( CreateRuleRequest(DOMAIN, rule.to_json() ) )
-        print(response)
-
+        rule = self.mailinator.request( CreateRuleRequest(DOMAIN, rule ) )
+        print("rule ", rule)
 
         # Get all Rules
-        response = self.mailinator.request( GetRulesRequest(DOMAIN) )
-
-        rules = Rules(**response)
-        print("Rules ", rules.__dict__)
+        rules = self.mailinator.request( GetRulesRequest(DOMAIN) )
 
         # Get rule_id
-        rule = response['rules'][0]
-        rule_id = rule['_id']
+        rule_id = rules.rules[0]._id
 
         # Get rule
-        response = self.mailinator.request( GetRuleRequest(DOMAIN, rule_id) )
-        print(response)
-
-        rule = Rule(**response)
-        print("Getting Rules", rule.__dict__)
+        rule = self.mailinator.request( GetRuleRequest(DOMAIN, rule_id) )
+        rule_id = rules.rules[0]._id
 
         # Enable Rule
         self.mailinator.request( EnableRuleRequest(DOMAIN, rule_id) )
