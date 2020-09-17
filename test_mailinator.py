@@ -175,6 +175,12 @@ class TestClass:
         response = self.mailinator.request( GetSmsInboxRequest(SMS_DOMAIN, SMS_PHONE_NUMBER) )
         print(response)
 
+        print()
+        print()
+        inbox = Inbox(**response)
+        print("inbox ", inbox)
+
+        print("Message ", inbox.msgs[0])
 
 
     def test_domains(self):

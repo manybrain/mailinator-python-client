@@ -179,12 +179,12 @@ class Inbox(BaseModel):
 class Message(BaseModel):
 
 
-    def __init__(self, from_full='', headers={}, subject='', \
+    def __init__(self, fromfull='', headers={}, subject='', \
                     parts=[], _from='', to='', id='', time=0, seconds_ago=0, \
                     domain='', origfrom='', mrid='', size=0, \
                     stream='', msgType='', source='', text='', \
                     *args, **kwargs):
-        self.from_full = from_full or ''
+        self.fromfull = fromfull or ''
         self.headers = headers.copy() if headers is not None else {}
         self.subject = subject or ''
         self.parts = parts if len(parts)>0 and isinstance(parts[0], Part) \
