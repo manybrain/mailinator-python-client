@@ -111,17 +111,38 @@ class TestClass:
         print("get inbox ", response)
         assert len(response['msgs']) == 1
 
+        print( "response ", response )
+        print()
+        print()
+
+        inbox = Inbox(**response)
+        print("inbox ", inbox)
+
+        print("Message ", inbox.msgs[0])
+
         # Get message_id
         message = response['msgs'][0]
         message_id = message['id']
         print("response ", response)
 
-        # Get Message
-        response = self.mailinator.request( GetMessageRequest(DOMAIN, INBOX, message_id) )
+        # # Get Message
+        # response = self.mailinator.request( GetMessageRequest(DOMAIN, INBOX, message_id) )
+
+        # print( "response ", response )
+        # print()
+        # print()
+
+        # message = Message(**response)
+        # print("inbox ", message)
+
 
         # Get Attachements list
         response = self.mailinator.request( GetAttachmentsRequest(DOMAIN, INBOX, message_id) )
         print(response)
+
+        attachments = Attachments(**response)
+        print("attachments ", attachments)
+        print("attachments ", attachments.attachments[0])
 
 
         # Get attachment_id
@@ -129,7 +150,7 @@ class TestClass:
         attachment_id = attachment['attachment-id']
         attachment_filename = attachment['filename']
 
-        # Get Attachements
+        # Get Attachement
         response = self.mailinator.request( GetAttachmentRequest(DOMAIN, INBOX, message_id, attachment_id) )
 
         # Print out attachment
@@ -187,32 +208,9 @@ class TestClass:
         logger.info("+++ test_rules +++")
 
         # Create Rule
-        data = {
-            "description": "Rule to post all incoming mail starting with test* to my webhook",
-            "enabled": True,
-            "name": "testprefixpost",
-            "conditions": [
-                {
-                    "operation": "PREFIX",
-                    "condition_data": {
-                        "field": "to",
-                        "value": "test"
-                    }
-                }
-            ],
-            "actions": [
-                {
-                    "action": "WEBHOOK",
-                    "action_data": {
-                        "url": "https://www.mywebsite.com/restendpoint"
-                    }
-                }
-            ]
-        }
         conditions = [Condition(operation=Condition.OperationType.PREFIX, field="to", value="test")]
         actions = [Action(action=Action.ActionType.DROP, action_data=Action.ActionData("https://www.mywebsite.com/restendpoint"))]
         rule = Rule(description="mydescription", enabled=True, name="MyName", conditions=conditions, actions=actions)
-
 
         response = self.mailinator.request( CreateRuleRequest(DOMAIN, rule.to_json() ) )
         print(response)

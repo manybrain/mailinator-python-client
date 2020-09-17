@@ -1,20 +1,19 @@
 import enum
 
 
+class BaseModel:
+    def __str__(self):
+        return str(self.__dict__.copy())   
 
 
 ## Condition
 ##
 
-class Condition:
+class Condition(BaseModel):
 
     class OperationType(enum.Enum):
         EQUALS = "EQUALS"
         PREFIX = "PREFIX"
-
-    operation = OperationType.EQUALS
-    field = None
-    value = None
 
     def __init__(self, operation=OperationType.EQUALS, field=None, \
                     value=None, *args, **kwargs):
@@ -25,8 +24,7 @@ class Condition:
             self.field = kwargs['condition_data']['field']
             self.value = kwargs['condition_data']['value']
 
-    def __str__(self):
-        return str(self.__dict__)        
+     
 
     def to_json(self):
         ret_val = self.__dict__.copy()
@@ -43,7 +41,7 @@ class Condition:
 ## ACTION
 ##
 
-class Action:
+class Action(BaseModel):
 
     class ActionType(enum.Enum):
         WEBHOOK = "WEBHOOK"
@@ -57,10 +55,6 @@ class Action:
         def to_json(self):
             return self.__dict__.copy()
 
-    action = None
-    action_data = None
-    destination = None
-
     def __init__(self, action=ActionType.DROP, \
                 action_data=None, destination=None, \
                 *args, **kwargs):
@@ -71,10 +65,6 @@ class Action:
                 if isinstance(action_data, self.ActionData) else self.ActionData(action_data)
         self.destination = destination
 
-    def __str__(self):
-        return str(self.__dict__)        
-
-
     def to_json(self):
         ret_val = self.__dict__.copy()
         ret_val['action'] = self.action.value
@@ -83,10 +73,10 @@ class Action:
             ret_val.pop('destination')
         return ret_val
 
-## ACTION
+## Rule
 ##
 
-class Rule:
+class Rule(BaseModel):
     class MatchType(enum.Enum):
         ANY = "ANY"
         ALL = "ALL"
@@ -113,11 +103,11 @@ class Rule:
         self.priority = priority or 0
         # Conditions
         if conditions is not None:
-            self.conditions = conditions if isinstance(conditions[0], Condition) \
+            self.conditions = conditions if len(conditions)>0 and isinstance(conditions[0], Condition) \
                         else [Condition(**k) for k in conditions ]
         # Actions
         if actions is not None:
-            self.actions = actions if isinstance(actions[0], Action) \
+            self.actions = actions if len(actions)>0 and isinstance(actions[0], Action) \
                                 else [Action(**k) for k in actions ]
 
 
@@ -131,8 +121,7 @@ class Rule:
         return ret_val
 
 # NOTE: This is dumb for me
-class Rules:
-    rules = []
+class Rules(BaseModel):
 
     def __init__(self, rules=None, *args, **kwargs):
         # Create Rules object
@@ -142,16 +131,11 @@ class Rules:
         else:
             self.rules = []
 
-    def __str__(self):
-        return str(self.__dict__)
+
+## Domain
+##
 
 class Domain:
-    _id = None
-    description = None
-    enabled = None
-    name = None
-    ownerid = None
-    rules = []
 
     def __init__(self, _id=None, description=None, \
             enabled=None, name=None, ownerid=None, rules=None, \
@@ -166,18 +150,102 @@ class Domain:
         self.rules = rules if isinstance(rules, Rules) else Rules(rules)
 
     def __str__(self):
-        return str(self.__dict__)
+        return str(self.__dict__.copy())
 
 # NOTE: This is dumb for me
 class Domains:
-    domains = []
 
-    def __init__(self, domains=None, *args, **kwargs):
+    def __init__(self, domains=[], *args, **kwargs):
         # Create Domains object
+        domains = domains or []
         self.domains = domains if isinstance(domains, Domains) \
                     else [Domain(**k) for k in domains ]
     
     def __str__(self):
-        return str(self.__dict__)
+        return str(self.__dict__.copy())
 
+## Inbox
+##
     
+class Inbox(BaseModel):
+
+    def __init__(self, domain='', to='', msgs=[], *args, **kwargs):
+        self.domain = domain or ''
+        self.to = to or ''
+        msgs = msgs or []
+        self.msgs = msgs if len(msgs)>0 and isinstance(msgs[0], Message) \
+                    else [Message(**k) for k in msgs ]
+    
+class Message(BaseModel):
+
+
+    def __init__(self, from_full='', headers={}, subject='', \
+                    parts=[], _from='', to='', id='', time=0, seconds_ago=0, \
+                    domain='', origfrom='', mrid='', size=0, \
+                    stream='', msgType='', source='', text='', \
+                    *args, **kwargs):
+        self.from_full = from_full or ''
+        self.headers = headers.copy() if headers is not None else {}
+        self.subject = subject or ''
+        self.parts = parts if len(parts)>0 and isinstance(parts[0], Part) \
+                    else [Part(**k) for k in parts ]
+        if 'from' in kwargs:
+            self._from = kwargs['from']
+        else:
+            self._from = _from or ''
+        self.to = to or ''
+        self.id = id or ''
+        self.time = time or 0
+        self.seconds_ago = seconds_ago or 0
+        self.domain = domain or ''
+        self.origfrom = origfrom or ''
+        self.mrid = mrid or ''
+        self.size = size or 0
+        self.stream = stream or ''
+        self.msgType = msgType or ''
+        self.source = source or ''
+        self.text = text or ''
+
+class Part(BaseModel):
+
+    def __init__(self, headers={}, body='', \
+                *args, **kwargs):
+        self.headers = headers.copy() if headers is not None else {}
+        self.body = body or ''
+
+
+class Attachment(BaseModel):
+
+    def __init__(self, filename='', content_disposition='', \
+                content_transfer_encoding='', content_type='', attachment_id='', \
+                *args, **kwargs):
+        self.filename = filename or ''
+
+        if 'content-disposition' in kwargs:
+            self.content_disposition = kwargs['content-disposition']
+        else:
+            self.content_disposition = content_disposition or ''
+        
+        if 'content-disposition' in kwargs:
+            self.content_transfer_encoding = kwargs['content-disposition']
+        else:
+            self.content_transfer_encoding = content_transfer_encoding or ''
+
+        if 'content-type' in kwargs:
+            self.content_type = kwargs['content-type']
+        else:
+            self.content_type = content_type or ''
+        
+        if 'attachment-id' in kwargs:
+            self.attachment_id = kwargs['attachment-id']
+        else:
+            self.attachment_id = attachment_id or ''                                    
+
+class Attachments(BaseModel):
+    attachments = None
+    
+    def __init__(self, attachments=[], *args, **kwargs):
+        # Create Domains object
+        attachments = attachments or []
+        self.attachments = attachments if len(attachments)>0 and isinstance(attachments[0], Attachment) \
+                    else [Attachment(**k) for k in attachments ]
