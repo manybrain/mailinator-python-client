@@ -4,5 +4,9 @@ tutorial.txt
 **venv*
 localsettings.py
 
+**/build/*
+**/dist/*
+**/*egg-info/*
+
 # Custom ignores
 tintin.jpg
