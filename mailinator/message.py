@@ -23,6 +23,16 @@ class GetMessageRequest(RequestData):
         url=f'{self._base_url}/domains/{domain}/inboxes/{inbox}/messages/{message_id}'
         super().__init__(RequestMethod.GET, url, model=Message)
 
+class GetMessageLinksRequest(RequestData):
+
+    def __init__(self, domain, inbox, message_id):
+        self.check_parameter(domain, 'domain')
+        self.check_parameter(inbox, 'inbox')
+        self.check_parameter(message_id, 'message_id')
+
+        url=f'{self._base_url}/domains/{domain}/inboxes/{inbox}/messages/{message_id}/links'
+        super().__init__(RequestMethod.GET, url, model=Links)
+
 class GetSmsInboxRequest(RequestData):
     def __init__(self, domain, phone_number):
         self.check_parameter(domain, 'domain')

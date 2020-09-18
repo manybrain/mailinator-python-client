@@ -138,9 +138,14 @@ class TestClass:
                 if chunk: # filter out keep-alive new chunks
                     f.write(chunk)
 
+        # Get Message links
+        links = self.mailinator.request( GetMessageLinksRequest(DOMAIN, INBOX, message_id) )
+        print("links ", links )
+
+
 
         # Delete Message Request
-        response = self.mailinator.request( DeleteDomainMessagesRequest(DOMAIN) )
+        # response = self.mailinator.request( DeleteDomainMessagesRequest(DOMAIN) )
         # response = self.mailinator.request( DeleteInboxMessagesRequest(DOMAIN) )        
         # response = self.mailinator.request( DeleteMessageRequest(DOMAIN, INBOX, message_id) )
 

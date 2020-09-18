@@ -266,3 +266,10 @@ class Attachments(BaseModel):
         attachments = attachments or []
         self.attachments = attachments if len(attachments)>0 and isinstance(attachments[0], Attachment) \
                     else [Attachment(**k) for k in attachments ]
+
+class Links(BaseModel):
+
+    def __init__(self, links=[], *args, **kwargs):
+        links = links or []
+        self.links = links.copy()
+        
