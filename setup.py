@@ -4,9 +4,9 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="mailinator-python-client", # Replace with your own username
-    version="0.0.1",
-    author="Example Author",
+    name="mailinator-python-client-2",
+    version="0.0.4",
+    author="Sergi Torrellas",
     author_email="storrellas@gmail.com",
     description="SDK for Mailinator",
     long_description="SDK for Mailinator",
@@ -19,7 +19,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        'requests>=2.24.0',
+        'requests',
     ],
     python_requires='>=3.6',
 )
