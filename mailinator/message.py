@@ -83,3 +83,11 @@ class DeleteMessageRequest(RequestData):
 
         url=f'{self._base_url}/domains/{domain}/inboxes/{inbox}/messages/{message_id}'
         super().__init__(RequestMethod.DELETE, url)
+
+class PostMessageRequest(RequestData):
+    def __init__(self, domain, inbox, data):
+        self.check_parameter(domain, 'domain')
+        self.check_parameter(inbox, 'inbox')
+
+        url=f'{self._base_url}/domains/{domain}/inboxes/{inbox}'
+        super().__init__(RequestMethod.POST, url, model=PostMessage, json=data.to_json())        

@@ -78,61 +78,64 @@ class TestClass:
     def test_fetch_inbox(self):
         logger.info("+++ test_fetch_inbox +++")
 
-        if SEND_EMAIL_ENABLED:
-            send_mail(SMTP_SENDER, [f'{INBOX}@{DOMAIN}'], "subject for test", "Here my mail", files='./tintin.jpg')
-            print("Sent email. Giving some time to backend ...")
-            time.sleep(10)
+        # if SEND_EMAIL_ENABLED:
+        #     send_mail(SMTP_SENDER, [f'{INBOX}@{DOMAIN}'], "subject for test", "Here my mail", files='./tintin.jpg')
+        #     print("Sent email. Giving some time to backend ...")
+        #     time.sleep(10)
 
-        # Fetch Inbox
-        print("Fetching Inbox ...")
-        inbox = self.mailinator.request( GetInboxRequest(DOMAIN, INBOX) )
-        assert len(inbox.msgs) == 1        
-        print("DONE!")
+        # # Fetch Inbox
+        # print("Fetching Inbox ...")
+        # inbox = self.mailinator.request( GetInboxRequest(DOMAIN, INBOX) )
+        # assert len(inbox.msgs) == 1        
+        # print("DONE!")
 
-        # Get message_id
-        message_id = inbox.msgs[0].id
-        print("Message id ", message_id)
+        # # Get message_id
+        # message_id = inbox.msgs[0].id
+        # print("Message id ", message_id)
 
-        # Get Message
-        print("Fetching Message ...")
-        message = self.mailinator.request( GetMessageRequest(DOMAIN, INBOX, message_id) )
-        print("DONE!")
+        # # Get Message
+        # print("Fetching Message ...")
+        # message = self.mailinator.request( GetMessageRequest(DOMAIN, INBOX, message_id) )
+        # print("DONE!")
 
-        # Get Attachements list
-        print("Fetching Attachments ...")
-        attachments = self.mailinator.request( GetAttachmentsRequest(DOMAIN, INBOX, message_id) )
-        assert len(inbox.msgs) == 1
-        print("DONE!")
+        # # Get Attachements list
+        # print("Fetching Attachments ...")
+        # attachments = self.mailinator.request( GetAttachmentsRequest(DOMAIN, INBOX, message_id) )
+        # assert len(inbox.msgs) == 1
+        # print("DONE!")
 
-        # Get attachment_id
-        attachment = attachments.attachments[0]
-        attachment_id = attachment.attachment_id
-        attachment_filename = attachment.filename
-        print("Attachment Id ", attachment_id)
+        # # Get attachment_id
+        # attachment = attachments.attachments[0]
+        # attachment_id = attachment.attachment_id
+        # attachment_filename = attachment.filename
+        # print("Attachment Id ", attachment_id)
 
-        # Get Attachement
-        response = self.mailinator.request( GetAttachmentRequest(DOMAIN, INBOX, message_id, attachment_id) )
+        # # Get Attachement
+        # response = self.mailinator.request( GetAttachmentRequest(DOMAIN, INBOX, message_id, attachment_id) )
 
-        # Print out attachment
-        output_filepath = 'downloaded_' + attachment_filename
-        with open(output_filepath, 'wb') as f:
-            for chunk in response.iter_content(chunk_size=1024): 
-                if chunk: # filter out keep-alive new chunks
-                    f.write(chunk)
+        # # Print out attachment
+        # output_filepath = 'downloaded_' + attachment_filename
+        # with open(output_filepath, 'wb') as f:
+        #     for chunk in response.iter_content(chunk_size=1024): 
+        #         if chunk: # filter out keep-alive new chunks
+        #             f.write(chunk)
 
-        # Get Message links
-        print("Fetching Links ...")
-        links = self.mailinator.request( GetMessageLinksRequest(DOMAIN, INBOX, message_id) )
-        print("links ", links )
-        print("DONE!")
+        # # Get Message links
+        # print("Fetching Links ...")
+        # links = self.mailinator.request( GetMessageLinksRequest(DOMAIN, INBOX, message_id) )
+        # print("links ", links )
+        # print("DONE!")
 
 
-        # Delete Message Request
-        if DELETE_REQUESTS:
-            response = self.mailinator.request( DeleteDomainMessagesRequest(DOMAIN) )
-            response = self.mailinator.request( DeleteInboxMessagesRequest(DOMAIN) )        
-            response = self.mailinator.request( DeleteMessageRequest(DOMAIN, INBOX, message_id) )
+        # # Delete Message Request
+        # if DELETE_REQUESTS:
+        #     response = self.mailinator.request( DeleteDomainMessagesRequest(DOMAIN) )
+        #     response = self.mailinator.request( DeleteInboxMessagesRequest(DOMAIN) )        
+        #     response = self.mailinator.request( DeleteMessageRequest(DOMAIN, INBOX, message_id) )
 
+        post_message = PostMessage({'from':'sergi@mail.com', 'subejct': "here my subject", 'text':"hello"})
+        response = self.mailinator.request( PostMessageRequest(DOMAIN, INBOX, post_message) )
+        print(response)
 
 
     def test_fetch_sms_inbox(self):

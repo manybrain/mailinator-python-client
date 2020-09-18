@@ -223,6 +223,21 @@ class Message(BaseModel):
         self.source = source or ''
         self.text = text or ''
 
+class PostMessage(BaseModel):
+    def __init__(self, _from='', subject='', text='', \
+                *args, **kwargs):
+        if 'from' in kwargs:
+            self._from = kwargs['from']
+        else:
+            self._from = _from or ''
+        self.subject = subject or ''
+        self.text = text or ''
+
+    def to_json(self):       
+        ret_val = self.__dict__.copy()
+        ret_val['from'] = self._from
+        return ret_val
+
 class Part(BaseModel):
 
     def __init__(self, headers={}, body='', \
