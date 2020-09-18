@@ -1,6 +1,6 @@
-#### [Mailinator](https://www.mailinator.com/) REST API client for JavaScript applications. 
+#### [Mailinator](https://www.mailinator.com/) REST API client for Python applications. 
 
-Uses [Microsoft's typed-rest-client](https://github.com/microsoft/typed-rest-client). All requests are async functions.
+Uses requests(https://requests.readthedocs.io/en/master/) to perform REST request operations
 
 #### Installation
 
@@ -12,37 +12,32 @@ pip install mailinator-python-client-2
 
 ##### Create MailinatorClient
 
-```typescript
-const mailinatorClient: MailinatorClient = new MailinatorClient("yourApiKeyHere");
+```python
+mailinator = Mailinator(API_TOKEN)
 ```
 
 ###### Get inbox from domain
 
-```typescript
-const response: IRestResponse<Inbox> = await mailinatorClient.request(
-            new GetInboxRequest("yourDomainNameHere")
-        );
+```python
+inbox = mailinator.request( GetInboxRequest(DOMAIN, INBOX) )
 ```
 
 ###### Get paginated messages from domain and inbox
 
-```typescript
-const response: IRestResponse<Inbox> = await mailinatorClient.request(
-            new GetInboxRequest("yourDomainNameHere", "yourInboxNameHere", 10, 20, Sort.DESC, true)
-        );
+```python
+inbox = mailinator.request( GetInboxRequest(DOMAIN, INBOXskip=0, limit=50, \
+                        sort='descending', decode_subject=False) )       
 ```
                                                        
 ###### Get message
              
-```typescript                                
-const response: IRestResponse<Message> = await mailinatorClient.request(
-            new GetMessageRequest("yourDomainNameHere", "yourInboxNameHere", "yourMessageIdHere")
-        );
+```python                                
+message = self.mailinator.request( GetMessageRequest(DOMAIN, INBOX, message_id) )
 ```
 
 #### Build tests
 
-* `npm test`
+* `pytest -s`
 
 By default, most of the tests are skipped. 
 
