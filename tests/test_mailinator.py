@@ -7,6 +7,7 @@ from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import COMMASPACE, formatdate
+import sys
 
 
 # Project includes
@@ -17,10 +18,15 @@ logger = get_logger()
 
 # Import localsettings if any
 try:
-    from localsettings import *
+    from .localsettings import *
 except ImportError:
     pass
 
+
+try: DELETE_REQUESTS
+except: 
+    print("Remember to copy the localsettings file!")
+    sys.exit(0)
 
 def send_mail(send_from, send_to, subject, text, files=None):
     assert isinstance(send_to, list)
@@ -68,65 +74,41 @@ class TestClass:
 
     mailinator = Mailinator(API_TOKEN)
 
-    # @classmethod
-    # def setup_class(cls):
-    #     logger.info(f"Clearing all inbo messages for domain {DOMAIN} ...")
-
-    #     # Delete all msgs from domain
-    #     mailinator = Mailinator(API_TOKEN, INBOX, DOMAIN)
-    #     response = mailinator.delete_domain()
-
-    #     # Fetch Inbox
-    #     response = mailinator.fetch_inbox()
-    #     print(response)
-    #     assert len( response['msgs'] ) == 0
-    #     logger.info(f"DONE!")
-
-
-
-    # @classmethod
-    # def teardown_class(cls):
-    #     print("starting class: {} execution".format(cls.__name__))
-    #     logger.info("END ---->")
-
-
-    # def setup(self):
-    #     logger.info(f"Clearing all inbox messages for domain {DOMAIN} ...")
-
-    #     # Delete all msgs from domain
-    #     mailinator = Mailinator(API_TOKEN, DOMAIN)
-    #     response = mailinator.delete_domain()
-
-    #     # Fetch Inbox
-    #     response = mailinator.fetch_inbox(INBOX)
-    #     print(response)
-    #     assert len(response['msgs']) == 0
-    #     logger.info(f"DONE!")
 
     def test_fetch_inbox(self):
         logger.info("+++ test_fetch_inbox +++")
 
-        # Fetch Inbox
-        inbox = self.mailinator.request( GetInboxRequest(DOMAIN, INBOX) )
-        assert len(inbox.msgs) == 1
+        if SEND_EMAIL_ENABLED:
+            send_mail(SMTP_SENDER, [f'{INBOX}@{DOMAIN}'], "subject for test", "Here my mail", files='./tintin.jpg')
+            print("Sent email. Giving some time to backend ...")
+            time.sleep(10)
 
-        print( "inbox ", inbox )
-        print( "inbox ", inbox.msgs[0] )
+        # Fetch Inbox
+        print("Fetching Inbox ...")
+        inbox = self.mailinator.request( GetInboxRequest(DOMAIN, INBOX) )
+        assert len(inbox.msgs) == 1        
+        print("DONE!")
 
         # Get message_id
         message_id = inbox.msgs[0].id
+        print("Message id ", message_id)
 
         # Get Message
+        print("Fetching Message ...")
         message = self.mailinator.request( GetMessageRequest(DOMAIN, INBOX, message_id) )
+        print("DONE!")
 
         # Get Attachements list
+        print("Fetching Attachments ...")
         attachments = self.mailinator.request( GetAttachmentsRequest(DOMAIN, INBOX, message_id) )
-        print("attachments ", attachments)
+        assert len(inbox.msgs) == 1
+        print("DONE!")
 
         # Get attachment_id
         attachment = attachments.attachments[0]
         attachment_id = attachment.attachment_id
         attachment_filename = attachment.filename
+        print("Attachment Id ", attachment_id)
 
         # Get Attachement
         response = self.mailinator.request( GetAttachmentRequest(DOMAIN, INBOX, message_id, attachment_id) )
@@ -139,15 +121,17 @@ class TestClass:
                     f.write(chunk)
 
         # Get Message links
+        print("Fetching Links ...")
         links = self.mailinator.request( GetMessageLinksRequest(DOMAIN, INBOX, message_id) )
         print("links ", links )
-
+        print("DONE!")
 
 
         # Delete Message Request
-        # response = self.mailinator.request( DeleteDomainMessagesRequest(DOMAIN) )
-        # response = self.mailinator.request( DeleteInboxMessagesRequest(DOMAIN) )        
-        # response = self.mailinator.request( DeleteMessageRequest(DOMAIN, INBOX, message_id) )
+        if DELETE_REQUESTS:
+            response = self.mailinator.request( DeleteDomainMessagesRequest(DOMAIN) )
+            response = self.mailinator.request( DeleteInboxMessagesRequest(DOMAIN) )        
+            response = self.mailinator.request( DeleteMessageRequest(DOMAIN, INBOX, message_id) )
 
 
 
@@ -155,37 +139,27 @@ class TestClass:
         logger.info("+++ test_fetch_sms_inbox +++")
 
         # Fetch Inbox
+        print("Fetching SMS Inbox ...")
         inbox = self.mailinator.request( GetSmsInboxRequest(SMS_DOMAIN, SMS_PHONE_NUMBER) )
-        print("inbox ", inbox)
-        print("inbox ", inbox.to_json() )
+        print("inbox ", inbox)        
+        print("DONE!")
 
 
     def test_domains(self):
         logger.info("+++ test_domains +++")
 
         # Get doamins
+        print("Fetching Domains ...")
         domains = self.mailinator.request( GetDomainsRequest() )
         print("domains ", domains)
-        print("domain ", domains.to_json())
+        print("DONE!")
 
-        # # Generate model
-        # #domains = Domains(domains= [Domain(**k) for k in response['domains'] ])
-        # domains = Domains(**response)
       
-        # Get doamins
+        # Get doamain
+        print("Fetching Domain ...")
         domain = self.mailinator.request( GetDomainRequest(DOMAIN) )
         print("domain ", domain.to_json())
-
-        # # Output results
-        # results_json = json.dumps(response, indent=2)
-        # #print(json.dumps(results, indent=2))
-        # print(results_json)
-
-        # # Generate model
-        # domain = Domain(**response)
-
-        # print("Domain ", domain)
-
+        print("DONE!")
 
 
     def test_rules(self):
@@ -196,25 +170,34 @@ class TestClass:
         actions = [Action(action=Action.ActionType.DROP, action_data=Action.ActionData("https://www.mywebsite.com/restendpoint"))]
         rule = Rule(description="mydescription", enabled=True, name="MyName", conditions=conditions, actions=actions)
 
+        print("Create Rule ...")
         rule = self.mailinator.request( CreateRuleRequest(DOMAIN, rule ) )
-        print("rule ", rule)
+        print("DONE!")
 
         # Get all Rules
+        print("Get All Rules ...")
         rules = self.mailinator.request( GetRulesRequest(DOMAIN) )
+        print("DONE!")
 
         # Get rule_id
         rule_id = rules.rules[0]._id
 
         # Get rule
+        print(f'Get Rule {rule_id} ...')
         rule = self.mailinator.request( GetRuleRequest(DOMAIN, rule_id) )
         rule_id = rules.rules[0]._id
+        print("DONE!")
 
         # Enable Rule
+        print(f'Enable Rule {rule_id} ...')
         self.mailinator.request( EnableRuleRequest(DOMAIN, rule_id) )
-
+        
         # Disable Rule
+        print(f'Disable Rule {rule_id} ...')
         self.mailinator.request( DisableRuleRequest(DOMAIN, rule_id) )
+        print("DONE!")
 
         # Delete Rule
+        print(f'Delete Rule {rule_id} ...')
         response = self.mailinator.request( DeleteRuleRequest(DOMAIN, rule_id) )
-        print(response)
+        print("DONE!")

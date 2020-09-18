@@ -1,0 +1,21 @@
+
+import os
+
+# Tests configuration
+DELETE_REQUESTS = os.getenv('DELETE_REQUESTS', False)   # SET to TRUE if test perform delete requests
+SEND_EMAIL_ENABLED = os.getenv('SEND_EMAIL_ENABLED', False)   # SET to TRUE if tests to be sending emails
+
+# MAILINATOR
+API_TOKEN = os.getenv('API_TOKEN', '')
+INBOX = os.getenv('INBOX', '')
+DOMAIN = os.getenv('DOMAIN', '')
+SMS_DOMAIN = os.getenv('SMS_DOMAIN', '')
+SMS_PHONE_NUMBER = os.getenv('SMS_PHONE_NUMBER', '')
+
+# SMTP Variables
+SMTP_SERVER = os.getenv('SMTP_SERVER', '')
+SMTP_PORT = int(os.getenv('SMTP_PORT', ''))
+SMTP_USERNAME = os.getenv('SMTP_USERNAME', '')
+SMTP_PASSWORD = os.getenv('SMTP_PASSWORD', '')
+SMTP_SENDER = os.getenv('SMTP_SENDER', '')
+
