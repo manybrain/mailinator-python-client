@@ -28,14 +28,13 @@ inbox = mailinator.request( GetInboxRequest(DOMAIN, INBOX) )
 inbox = mailinator.request( GetInboxRequest(DOMAIN, INBOXskip=0, limit=50, \
                         sort='descending', decode_subject=False) )       
 ```
-
-Refer to `tests/test_mailinator.py` for more examples in usage
-
 ###### Get message
              
 ```python                                
 message = self.mailinator.request( GetMessageRequest(DOMAIN, INBOX, message_id) )
 ```
+
+Refer to `tests/test_mailinator.py` for more examples in usage
 
 #### Build tests
 
