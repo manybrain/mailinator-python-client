@@ -156,7 +156,7 @@ class Domain(BaseModel):
 
     def to_json(self):       
         ret_val = self.__dict__.copy()
-        ret_val['rules'] = [rules.to_json() for rule in self.rules.rules]
+        ret_val['rules'] = [self.rules.to_json() for rule in self.rules.rules]
         return ret_val
 
 # NOTE: This is dumb for me
@@ -223,6 +223,19 @@ class Message(BaseModel):
         self.source = source or ''
         self.text = text or ''
 
+class LatestMessages(BaseModel):
+
+    def __init__(self, to='', msgs=[], *args, **kwargs):
+        self.to = to or ''
+        msgs = msgs or []
+        self.msgs = msgs if len(msgs)>0 and isinstance(msgs[0], Message) \
+                    else [Message(**k) for k in msgs ]
+    
+    def to_json(self):       
+        ret_val = self.__dict__.copy()
+        ret_val['msgs'] = [msg.to_json() for msg in self.msgs]
+        return ret_val
+
 class PostMessage(BaseModel):
     def __init__(self, _from='', subject='', text='', \
                 *args, **kwargs):
@@ -287,4 +300,42 @@ class Links(BaseModel):
     def __init__(self, links=[], *args, **kwargs):
         links = links or []
         self.links = links.copy()
-        
+
+class EmailLogEntry(BaseModel):
+    
+    def __init__(self, log='', time='', event='', \
+            *args, **kwargs):
+        self.log = log or ''
+        self.time = time or ''
+        self.event = event or False
+
+class SmtpLogs(BaseModel):
+
+    def __init__(self, smtp_logs=None, *args, **kwargs):
+        if smtp_logs is not None:        
+            self.smtp_logs = smtp_logs if isinstance(smtp_logs, EmailLogEntry) \
+                                else [EmailLogEntry(**k) for k in smtp_logs ]
+        else:
+            self.smtp_logs = []
+      
+class RawData(BaseModel):
+
+    def __init__(self, raw_data='', *args, **kwargs):
+        raw_data = raw_data or ''
+        self.raw_data = raw_data  
+
+class Webhook(BaseModel):
+    def __init__(self, _from='', subject='', text='', to = '', \
+                *args, **kwargs):
+        if 'from' in kwargs:
+            self._from = kwargs['from']
+        else:
+            self._from = _from or ''
+        self.subject = subject or ''
+        self.text = text or ''
+        self.to = to or ''
+
+    def to_json(self):       
+        ret_val = self.__dict__.copy()
+        ret_val['from'] = self._from
+        return ret_val

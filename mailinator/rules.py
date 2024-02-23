@@ -38,7 +38,7 @@ class GetRuleRequest(RequestData):
 
         url=f'{self._base_url}/domains/{domain}/rules/{rule_id}/'
 
-        print("URL   ", url)
+        #print("URL   ", url)
         super().__init__(RequestMethod.GET, url, model=Rules)
 
 class DeleteRuleRequest(RequestData):

@@ -16,14 +16,19 @@ class Mailinator:
     token = None
 
     __headers = {}
-    __base_url = 'https://mailinator.com/api/v2'
+    __base_url = 'https://api.mailinator.com/api/v2'
+    __version = '0.0.6'  # Change this to your SDK version
 
-    def __init__(self, token):
+    def __init__(self, token=None):
         self.token = token
-        if self.token is None:
-            raise ValueError('Token cannot be None')
-
-        self.headers = {'Authorization': self.token}
+        user_agent = f"Mailinator SDK - Python V{self.__version}"
+        if token is not None:
+            self.headers = {
+                'Authorization': self.token,
+                'User-Agent': user_agent
+            }
+        else:
+            self.headers = {'User-Agent': user_agent}
 
     def request( self, request_data ):
         if request_data.method == RequestMethod.GET:
@@ -42,7 +47,7 @@ class Mailinator:
              response.status_code == HTTPStatus.NO_CONTENT:
             pass
         else:
-            raise MailinatorException("Request returned no ok")
+            raise MailinatorException(f"Request failed with status code {response.status_code}. Response: {response.content}")
 
         if 'Content-Type' in response.headers and \
             response.headers['Content-Type'] == 'application/json':

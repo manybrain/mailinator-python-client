@@ -50,7 +50,7 @@ headers = {'Authorization': API_TOKEN}
 ######################
 # https://manybrain.github.io/m8rdocs/#fetch-inbox-aka-fetch-message-summaries
 
-response = requests.get(f'https://mailinator.com/api/v2/domains/{DOMAIN}/inboxes/{INBOX}?limit=2&sort=descending', headers=headers)
+response = requests.get(f'https://api.mailinator.com/api/v2/domains/{DOMAIN}/inboxes/{INBOX}?limit=2&sort=descending', headers=headers)
 json_data = response.json()
 
 # JSON Data
@@ -155,7 +155,7 @@ sys.exit(0)
 message = json_data['msgs'][0]
 message_id = message['id']
 
-response = requests.get(f'https://mailinator.com/api/v2/domains/{DOMAIN}/inboxes/{INBOX}/messages/{message_id}', headers=headers)
+response = requests.get(f'https://api.mailinator.com/api/v2/domains/{DOMAIN}/inboxes/{INBOX}/messages/{message_id}', headers=headers)
 json_data = response.json()
 
 # JSON Data
@@ -170,7 +170,7 @@ print(json.dumps(json_data, indent=4))
 # SMS_INBOX = 'public'
 # SMS_TEAM_NUMBER = '12013814330'
 
-# response = requests.get(f'https://mailinator.com/api/v2/domains/{SMS_INBOX}/inboxes/{SMS_TEAM_NUMBER}', headers=headers)
+# response = requests.get(f'https://api.mailinator.com/api/v2/domains/{SMS_INBOX}/inboxes/{SMS_TEAM_NUMBER}', headers=headers)
 # json_data = response.json()
 
 # # JSON Data
@@ -185,7 +185,7 @@ print(json.dumps(json_data, indent=4))
 # # https://manybrain.github.io/m8rdocs/#fetch-list-of-attachments
 
 
-# response = requests.get(f'https://mailinator.com/api/v2/domains/{DOMAIN}/inboxes/{INBOX}/messages/{message_id}/attachments', headers=headers)
+# response = requests.get(f'https://api.mailinator.com/api/v2/domains/{DOMAIN}/inboxes/{INBOX}/messages/{message_id}/attachments', headers=headers)
 # json_data = response.json()
 
 # # JSON Data
@@ -200,7 +200,7 @@ print(json.dumps(json_data, indent=4))
 # # https://manybrain.github.io/m8rdocs/#fetch-list-of-attachments
 
 
-# response = requests.get(f'https://mailinator.com/api/v2/domains/{DOMAIN}/inboxes/{INBOX}/messages/{message_id}/attachments/{attachment_id}', headers=headers)
+# response = requests.get(f'https://api.mailinator.com/api/v2/domains/{DOMAIN}/inboxes/{INBOX}/messages/{message_id}/attachments/{attachment_id}', headers=headers)
 # # print(" ", response.content)
 # # json_data = json.loads(response.text)
 
@@ -242,7 +242,7 @@ print(json.dumps(json_data, indent=4))
 # print( "INBOX  -> ", INBOX )
 
 
-# response = requests.post(f'https://mailinator.com/api/v2/domains/{DOMAIN}/inboxes/{INBOX}', \
+# response = requests.post(f'https://api.mailinator.com/api/v2/domains/{DOMAIN}/inboxes/{INBOX}', \
 #                         json = body, headers = headers)
 # print("status_code ", response.status_code)
 # print("text '", response.text, "'")

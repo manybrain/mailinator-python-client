@@ -9,7 +9,7 @@ class RequestMethod(enum.Enum):
     DELETE = "delete"
 
 class RequestData:
-    _base_url = 'https://mailinator.com/api/v2'
+    _base_url = 'https://api.mailinator.com/api/v2'
 
     def check_parameter(self, parameter, name):
         if parameter is None:

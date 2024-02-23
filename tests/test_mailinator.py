@@ -1,4 +1,6 @@
+import random
 import smtplib
+import string
 import requests
 import time
 import json
@@ -28,52 +30,85 @@ except:
     print("Remember to copy the localsettings file!")
     sys.exit(0)
 
-def send_mail(send_from, send_to, subject, text, files=None):
-    assert isinstance(send_to, list)
+# def send_mail(send_from, send_to, subject, text, files=None):
+#     assert isinstance(send_to, list)
 
-    # Generate message
-    msg = MIMEMultipart()
-    msg['From'] = send_from
-    msg['To'] = COMMASPACE.join(send_to)
-    msg['Date'] = formatdate(localtime=True)
-    msg['Subject'] = subject
-    msg.attach(MIMEText(text))
+#     # Generate message
+#     msg = MIMEMultipart()
+#     msg['From'] = send_from
+#     msg['To'] = COMMASPACE.join(send_to)
+#     msg['Date'] = formatdate(localtime=True)
+#     msg['Subject'] = subject
+#     msg.attach(MIMEText(text))
 
-    # Attach files
-    for f in files or []:
-        with open(f, "rb") as fil:
-            part = MIMEApplication(
-                fil.read(),
-                Name=basename(f)
-            )
-        # After the file is closed
-        part['Content-Disposition'] = 'attachment; filename="%s"' % basename(f)
-        msg.attach(part)
+#     # Attach files
+#     for f in files or []:
+#         with open(f, "rb") as fil:
+#             part = MIMEApplication(
+#                 fil.read(),
+#                 Name=basename(f)
+#             )
+#         # After the file is closed
+#         part['Content-Disposition'] = 'attachment; filename="%s"' % basename(f)
+#         msg.attach(part)
 
 
-    # Initiate SMTP lib
-    smtp = smtplib.SMTP()
+#     # Initiate SMTP lib
+#     smtp = smtplib.SMTP()
 
-    smtp.connect(SMTP_SERVER, SMTP_PORT)
-    # identify ourselves to smtp gmail client
-    smtp.ehlo()
-    # secure our email with tls encryption
-    smtp.starttls()
-    # re-identify ourselves as an encrypted connection
-    smtp.ehlo()
-    smtp.login(SMTP_USERNAME, SMTP_PASSWORD)
-    # Send the actual email
-    response = smtp.sendmail(send_from, send_to, msg.as_string())
-    print(response)
-    # Close SMTP connection
-    smtp.close()
+#     smtp.connect(SMTP_SERVER, SMTP_PORT)
+#     # identify ourselves to smtp gmail client
+#     smtp.ehlo()
+#     # secure our email with tls encryption
+#     smtp.starttls()
+#     # re-identify ourselves as an encrypted connection
+#     smtp.ehlo()
+#     smtp.login(SMTP_USERNAME, SMTP_PASSWORD)
+#     # Send the actual email
+#     response = smtp.sendmail(send_from, send_to, msg.as_string())
+#     print(response)
+#     # Close SMTP connection
+#     smtp.close()
 
         
 
 class TestClass:
 
     mailinator = Mailinator(API_TOKEN)
+    mailinator_without_api_token = Mailinator()
 
+    def test_authenticators(self):
+        logger.info("+++ test_authenticators +++")
+
+        # InstantTOTP2FACode
+        print("Instant TOTP 2FA Code ...")
+        codes = self.mailinator.request( InstantTOTP2FACodeRequest(AUTH_SECRET) )
+        print("codes ", codes)
+        print("DONE!")
+        
+        # GetAuthenticatorsRequest
+        print("Get Authenticators ...")
+        codes = self.mailinator.request( GetAuthenticatorsRequest() )
+        print("codes ", codes)
+        print("DONE!")
+        
+        # GetAuthenticatorsByIdRequest
+        print("Get Authenticators By Id ...")
+        codes = self.mailinator.request( GetAuthenticatorsByIdRequest(AUTH_ID) )
+        print("codes ", codes)
+        print("DONE!")
+        
+        # GetAuthenticatorRequest
+        print("Get Authenticator ...")
+        codes = self.mailinator.request( GetAuthenticatorRequest() )
+        print("codes ", codes)
+        print("DONE!")
+        
+        # GetAuthenticatorByIdRequest
+        print("Get Authenticator By Id ...")
+        codes = self.mailinator.request( GetAuthenticatorByIdRequest(AUTH_ID) )
+        print("codes ", codes)
+        print("DONE!")
 
     def test_fetch_inbox(self):
         logger.info("+++ test_fetch_inbox +++")
@@ -93,14 +128,25 @@ class TestClass:
         message_id = inbox.msgs[0].id
         print("Message id ", message_id)
 
-        # Get Message
+        # Get Inbox Message
         print("Fetching Message ...")
-        message = self.mailinator.request( GetMessageRequest(DOMAIN, INBOX, message_id) )
+        message = self.mailinator.request( GetInboxMessageRequest(DOMAIN, INBOX, message_id) )
         print("DONE!")
 
-        # Get Attachements list
-        print("Fetching Attachments ...")
-        attachments = self.mailinator.request( GetAttachmentsRequest(DOMAIN, INBOX, message_id) )
+        # Get Message
+        print("Fetching Message ...")
+        message = self.mailinator.request( GetMessageRequest(DOMAIN, message_id) )
+        print("DONE!")
+
+        # Get Inbox Message Attachments list
+        print("Fetching Inbox Message Attachments ...")
+        attachments = self.mailinator.request( GetInboxMessageAttachmentsRequest(DOMAIN, INBOX, MESSAGE_WITH_ATTACHMENT_ID) )
+        assert len(inbox.msgs) == 1
+        print("DONE!")
+
+        # Get Message Attachments list
+        print("Fetching Message Attachments ...")
+        attachments = self.mailinator.request( GetMessageAttachmentsRequest(DOMAIN, MESSAGE_WITH_ATTACHMENT_ID) )
         assert len(inbox.msgs) == 1
         print("DONE!")
 
@@ -110,8 +156,18 @@ class TestClass:
         attachment_filename = attachment.filename
         print("Attachment Id ", attachment_id)
 
-        # Get Attachement
-        response = self.mailinator.request( GetAttachmentRequest(DOMAIN, INBOX, message_id, attachment_id) )
+        # Get Inbox Message Attachment
+        response = self.mailinator.request( GetInboxMessageAttachmentRequest(DOMAIN, INBOX, message_id, MESSAGE_WITH_ATTACHMENT_ID) )
+
+        # Print out attachment
+        output_filepath = 'downloaded_' + attachment_filename
+        with open(output_filepath, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=1024): 
+                if chunk: # filter out keep-alive new chunks
+                    f.write(chunk)
+
+        # Get Message Attachment
+        response = self.mailinator.request( GetMessageAttachmentRequest(DOMAIN, message_id, MESSAGE_WITH_ATTACHMENT_ID) )
 
         # Print out attachment
         output_filepath = 'downloaded_' + attachment_filename
@@ -122,7 +178,13 @@ class TestClass:
 
         # Get Message links
         print("Fetching Links ...")
-        links = self.mailinator.request( GetMessageLinksRequest(DOMAIN, INBOX, message_id) )
+        links = self.mailinator.request( GetMessageLinksRequest(DOMAIN, message_id) )
+        print("links ", links )
+        print("DONE!")
+
+        # Get Inbox Message links
+        print("Fetching Inbox Message Links ...")
+        links = self.mailinator.request( GetInboxMessageLinksRequest(DOMAIN, INBOX, message_id) )
         print("links ", links )
         print("DONE!")
 
@@ -133,13 +195,47 @@ class TestClass:
         print(response)
         print("DONE!")
 
+        # Get Inbox Message Smtp Log
+        print("Fetching Inbox Message Smtp Log ...")
+        smtp_log = self.mailinator.request( GetInboxMessageSmtpLogRequest(DOMAIN, INBOX, message_id) )
+        print("smtp log ", smtp_log )
+        print("DONE!")
+        
+        # Get Message Smtp Log
+        print("Fetching Message Smtp Log ...")
+        smtp_log = self.mailinator.request( GetMessageSmtpLogRequest(DOMAIN, message_id) )
+        print("smtp log ", smtp_log )
+        print("DONE!")
+
+        # Get Inbox Message Raw
+        print("Fetching Inbox Message Raw ...")
+        raw_data = self.mailinator.request( GetInboxMessageRawRequest(DOMAIN, INBOX, message_id) )
+        print("raw data ", raw_data )
+        print("DONE!")
+
+        # Get Message Raw
+        print("Fetching Message Raw ...")
+        raw_data = self.mailinator.request( GetMessageRawRequest(DOMAIN, message_id) )
+        print("raw data ", raw_data )
+        print("DONE!")
+
+        # Get Latest Inbox Messages
+        print("Fetching Latest Inbox Messages ...")
+        latest_messages = self.mailinator.request( GetLatestInboxMessagesRequest(DOMAIN, INBOX) )
+        print("latest messages ", latest_messages )
+        print("DONE!")
+
+        # Get Latest Messages
+        print("Fetching Latest Messages ...")
+        latest_messages = self.mailinator.request( GetLatestMessagesRequest(DOMAIN) )
+        print("latest messages ", latest_messages )
+        print("DONE!")
+
         # Delete Message Request
         if DELETE_REQUESTS:
             response = self.mailinator.request( DeleteDomainMessagesRequest(DOMAIN) )
             response = self.mailinator.request( DeleteInboxMessagesRequest(DOMAIN) )        
             response = self.mailinator.request( DeleteMessageRequest(DOMAIN, INBOX, message_id) )
-
-
 
 
     def test_fetch_sms_inbox(self):
@@ -155,17 +251,29 @@ class TestClass:
     def test_domains(self):
         logger.info("+++ test_domains +++")
 
-        # Get doamins
+        # Get domains
         print("Fetching Domains ...")
         domains = self.mailinator.request( GetDomainsRequest() )
         print("domains ", domains)
         print("DONE!")
 
       
-        # Get doamain
+        # Get domain
         print("Fetching Domain ...")
         domain = self.mailinator.request( GetDomainRequest(DOMAIN) )
         print("domain ", domain.to_json())
+        print("DONE!")
+        
+        domainNameToCreate = "testpython.testinator.com" 
+
+        # Create domain
+        print("Create Domain ...")
+        status = self.mailinator.request( CreateDomainRequest(domainNameToCreate) )
+        print("DONE!")
+
+        # Delete domain
+        print("Delete Domain ...")
+        status = self.mailinator.request( DeleteDomainRequest(domainNameToCreate) )
         print("DONE!")
 
 
@@ -175,7 +283,8 @@ class TestClass:
         # Create Rule
         conditions = [Condition(operation=Condition.OperationType.PREFIX, field="to", value="test")]
         actions = [Action(action=Action.ActionType.DROP, action_data=Action.ActionData("https://www.mywebsite.com/restendpoint"))]
-        rule = Rule(description="mydescription", enabled=True, name="MyName", conditions=conditions, actions=actions)
+        random_suffix = ''.join(random.choices(string.ascii_letters + string.digits, k=8))  # Generate a random string of length 8
+        rule = Rule(description="mydescription", enabled=True, name=f"RuleNameFromPythonTest_{random_suffix}", conditions=conditions, actions=actions)
 
         print("Create Rule ...")
         rule = self.mailinator.request( CreateRuleRequest(DOMAIN, rule ) )
@@ -208,3 +317,49 @@ class TestClass:
         print(f'Delete Rule {rule_id} ...')
         response = self.mailinator.request( DeleteRuleRequest(DOMAIN, rule_id) )
         print("DONE!")
+
+
+    def test_webhooks(self):
+        logger.info("+++ test_webhooks +++")
+
+        webhook = Webhook(_from="MyMailinatorPythonTest", subject="testing message", text="hello world", to="jack")
+
+        # Public Webhook
+        print("Public Webhook ...")
+        webhook_response = self.mailinator_without_api_token.request( PublicWebhookRequest(webhook) )
+        print("DONE!") 
+        
+        # Public Inbox Webhook
+        print("Public Inbox Webhook ...")
+        webhook_response = self.mailinator_without_api_token.request( PublicInboxWebhookRequest(WEBHOOK_INBOX, webhook) )
+        print("DONE!") 
+        
+        # Public Custom Service Webhook
+        print("Public Custom Service Webhook ...")
+        webhook_response = self.mailinator_without_api_token.request( PublicCustomServiceWebhookRequest(WEBHOOK_CUSTOMSERVICE, webhook) )
+        print("DONE!") 
+        
+        # Public Custom Service Inbox Webhook
+        print("Public Custom Service Inbox Webhook ...")
+        webhook_response = self.mailinator_without_api_token.request( PublicCustomServiceInboxWebhookRequest(WEBHOOK_CUSTOMSERVICE, WEBHOOK_INBOX, webhook) )
+        print("DONE!") 
+        
+        # Private Webhook
+        print("Private Webhook ...")
+        webhook_response = self.mailinator_without_api_token.request( PrivateWebhookRequest(WEBHOOKTOKEN_PRIVATEDOMAIN, webhook) )
+        print("DONE!") 
+        
+        # Private Inbox Webhook
+        print("Private Inbox Webhook ...")
+        webhook_response = self.mailinator_without_api_token.request( PrivateInboxWebhookRequest(WEBHOOKTOKEN_PRIVATEDOMAIN, WEBHOOK_INBOX, webhook) )
+        print("DONE!") 
+        
+        # Private Custom Service Webhook
+        print("Private Custom Service Webhook ...")
+        webhook_response = self.mailinator_without_api_token.request( PrivateCustomServiceWebhookRequest(WEBHOOKTOKEN_CUSTOMSERVICE, WEBHOOK_CUSTOMSERVICE, webhook) )
+        print("DONE!") 
+        
+        # Private Custom Service Inbox Webhook
+        print("Private Custom Service Inbox Webhook ...")
+        webhook_response = self.mailinator_without_api_token.request( PrivateCustomServiceInboxWebhookRequest(WEBHOOKTOKEN_CUSTOMSERVICE, WEBHOOK_CUSTOMSERVICE, WEBHOOK_INBOX, webhook) )
+        print("DONE!") 
