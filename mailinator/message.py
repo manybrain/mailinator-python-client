@@ -3,15 +3,30 @@ from .models import *
 
 class GetInboxRequest(RequestData):
     def __init__(self, domain, inbox, skip=0, limit=50, sort='descending', \
-            decode_subject=False):
+            decode_subject=False, cursor=None, full=None, delete=None, wait=None):
         self.check_parameter(domain, 'domain')
         self.check_parameter(inbox, 'inbox')
 
-        url=f'{self._base_url}/domains/{domain}/inboxes/{inbox}?'
-        url = url + (f'skip={skip}' if skip is not None else '')
-        url = url + (f'&limit={limit}' if limit is not None else '')
-        url = url + (f'&sort={sort}' if sort is not None else '')
-        url = url + (f'&decode_subject={decode_subject}' if decode_subject is not None else '')
+        base_url = f'{self._base_url}/domains/{domain}/inboxes/{inbox}'
+
+         # Build query params dynamically
+        params = {
+            "skip": skip,
+            "limit": limit,
+            "sort": sort,
+            "decode_subject": decode_subject,
+            "cursor": cursor,
+            "full": full,
+            "delete": delete,
+            "wait": wait
+        }
+
+        # Filter out None values
+        query_string = '&'.join(f"{key}={value}" for key, value in params.items() if value is not None)
+
+        # Construct final URL
+        url = f"{base_url}?{query_string}" if query_string else base_url
+
         super().__init__(RequestMethod.GET, url, model=Inbox)
 
 class GetInboxMessageRequest(RequestData):
@@ -24,11 +39,20 @@ class GetInboxMessageRequest(RequestData):
         super().__init__(RequestMethod.GET, url, model=Message)
 
 class GetMessageRequest(RequestData):
-    def __init__(self, domain, message_id):
+    def __init__(self, domain, message_id, delete=None):
         self.check_parameter(domain, 'domain')
         self.check_parameter(message_id, 'message_id')
 
-        url=f'{self._base_url}/domains/{domain}/messages/{message_id}'
+        base_url = f'{self._base_url}/domains/{domain}/messages/{message_id}'
+
+        params = {
+            "delete": delete
+        }
+
+        query_string = '&'.join(f"{key}={value}" for key, value in params.items() if value is not None)
+
+        url = f"{base_url}?{query_string}" if query_string else base_url
+
         super().__init__(RequestMethod.GET, url, model=Message)
 
 class GetSmsInboxRequest(RequestData):
@@ -83,6 +107,14 @@ class GetMessageLinksRequest(RequestData):
 
         url=f'{self._base_url}/domains/{domain}/messages/{message_id}/links'
         super().__init__(RequestMethod.GET, url, model=Links)
+
+class GetMessageLinksFullRequest(RequestData):
+    def __init__(self, domain, message_id):
+        self.check_parameter(domain, 'domain')
+        self.check_parameter(message_id, 'message_id')
+
+        url=f'{self._base_url}/domains/{domain}/messages/{message_id}/linksfull'
+        super().__init__(RequestMethod.GET, url, model=LinksFull)
 
 class GetInboxMessageLinksRequest(RequestData):
     def __init__(self, domain, inbox, message_id):

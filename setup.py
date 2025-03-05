@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="mailinator-python-client-2",
-    version="0.0.6",
+    version="0.0.7",
     author="Marian Melnychuk",
     author_email="marian.melnychuk@gmail.com",
     description="SDK for Mailinator",

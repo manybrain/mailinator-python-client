@@ -124,6 +124,30 @@ class TestClass:
         assert len(inbox.msgs) == 1        
         print("DONE!")
 
+        # Fetch Inbox With Cursor Param
+        print("Fetching Inbox With Cursor Param...")
+        inbox = self.mailinator.request( GetInboxRequest(DOMAIN, INBOX, cursor=inbox.cursor, limit=1) )
+        assert len(inbox.msgs) == 1        
+        print("DONE!")
+
+        # Fetch Inbox With Full Param
+        print("Fetching Inbox With Full Param...")
+        inbox = self.mailinator.request( GetInboxRequest(DOMAIN, INBOX, full=true, limit=1) )
+        assert len(inbox.msgs) == 1        
+        print("DONE!")
+        
+        # Fetch Inbox With Delete Param
+        print("Fetching Inbox With Delete Param...")
+        inbox = self.mailinator.request( GetInboxRequest(DOMAIN, INBOX, delete="10s", limit=1) )
+        assert len(inbox.msgs) == 1        
+        print("DONE!")
+        
+        # Fetch Inbox With Wait Param
+        print("Fetching Inbox With Wait Param...")
+        inbox = self.mailinator.request( GetInboxRequest(DOMAIN, INBOX, wait="10s", limit=1) )
+        assert len(inbox.msgs) == 1        
+        print("DONE!")
+
         # Get message_id
         message_id = inbox.msgs[0].id
         print("Message id ", message_id)
@@ -136,6 +160,11 @@ class TestClass:
         # Get Message
         print("Fetching Message ...")
         message = self.mailinator.request( GetMessageRequest(DOMAIN, message_id) )
+        print("DONE!")
+
+        # Get Message With Delete Param
+        print("Fetching Message With Delete Param ...")
+        message = self.mailinator.request( GetMessageRequest(DOMAIN, message_id, "10s") )
         print("DONE!")
 
         # Get Inbox Message Attachments list
@@ -180,6 +209,12 @@ class TestClass:
         print("Fetching Links ...")
         links = self.mailinator.request( GetMessageLinksRequest(DOMAIN, message_id) )
         print("links ", links )
+        print("DONE!")
+
+        Get Message links full
+        print("Fetching Links Full...")
+        linksFull = self.mailinator.request( GetMessageLinksFullRequest(DOMAIN, message_id) )
+        print("links full ", linksFull )
         print("DONE!")
 
         # Get Inbox Message links
@@ -324,26 +359,6 @@ class TestClass:
 
         webhook = Webhook(_from="MyMailinatorPythonTest", subject="testing message", text="hello world", to="jack")
 
-        # Public Webhook
-        print("Public Webhook ...")
-        webhook_response = self.mailinator_without_api_token.request( PublicWebhookRequest(webhook) )
-        print("DONE!") 
-        
-        # Public Inbox Webhook
-        print("Public Inbox Webhook ...")
-        webhook_response = self.mailinator_without_api_token.request( PublicInboxWebhookRequest(WEBHOOK_INBOX, webhook) )
-        print("DONE!") 
-        
-        # Public Custom Service Webhook
-        print("Public Custom Service Webhook ...")
-        webhook_response = self.mailinator_without_api_token.request( PublicCustomServiceWebhookRequest(WEBHOOK_CUSTOMSERVICE, webhook) )
-        print("DONE!") 
-        
-        # Public Custom Service Inbox Webhook
-        print("Public Custom Service Inbox Webhook ...")
-        webhook_response = self.mailinator_without_api_token.request( PublicCustomServiceInboxWebhookRequest(WEBHOOK_CUSTOMSERVICE, WEBHOOK_INBOX, webhook) )
-        print("DONE!") 
-        
         # Private Webhook
         print("Private Webhook ...")
         webhook_response = self.mailinator_without_api_token.request( PrivateWebhookRequest(WEBHOOKTOKEN_PRIVATEDOMAIN, webhook) )
@@ -363,3 +378,24 @@ class TestClass:
         print("Private Custom Service Inbox Webhook ...")
         webhook_response = self.mailinator_without_api_token.request( PrivateCustomServiceInboxWebhookRequest(WEBHOOKTOKEN_CUSTOMSERVICE, WEBHOOK_CUSTOMSERVICE, WEBHOOK_INBOX, webhook) )
         print("DONE!") 
+
+    def test_stats(self):
+        logger.info("+++ test_stats +++")
+
+        # Get team
+        print("Fetching Team ...")
+        team = self.mailinator.request( GetTeamRequest() )
+        print("team ", team)
+        print("DONE!")
+
+        # Get stats
+        print("Fetching Team Stats ...")
+        team = self.mailinator.request( GetTeamStatsRequest() )
+        print("team stats ", team)
+        print("DONE!")
+        
+        # Get team info
+        print("Fetching Team Info ...")
+        team = self.mailinator.request( GetTeamInfoRequest() )
+        print("team info ", team)
+        print("DONE!")

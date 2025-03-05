@@ -181,12 +181,13 @@ class Domains(BaseModel):
     
 class Inbox(BaseModel):
 
-    def __init__(self, domain='', to='', msgs=[], *args, **kwargs):
+    def __init__(self, domain='', to='', msgs=[], cursor='', *args, **kwargs):
         self.domain = domain or ''
         self.to = to or ''
         msgs = msgs or []
         self.msgs = msgs if len(msgs)>0 and isinstance(msgs[0], Message) \
                     else [Message(**k) for k in msgs ]
+        self.cursor = cursor or ''
     
     def to_json(self):       
         ret_val = self.__dict__.copy()
@@ -202,7 +203,8 @@ class Message(BaseModel):
                     stream='', msgType='', source='', text='', \
                     *args, **kwargs):
         self.fromfull = fromfull or ''
-        self.headers = headers.copy() if headers is not None else {}
+        #self.headers = headers.copy() if headers is not None else {}
+        self.headers = headers.copy() if isinstance(headers, dict) else {}
         self.subject = subject or ''
         self.parts = parts if len(parts)>0 and isinstance(parts[0], Part) \
                     else [Part(**k) for k in parts ]
@@ -301,6 +303,12 @@ class Links(BaseModel):
         links = links or []
         self.links = links.copy()
 
+class LinksFull(BaseModel):
+
+    def __init__(self, links=[], *args, **kwargs):
+        links = links or []
+        self.links = links.copy()
+
 class EmailLogEntry(BaseModel):
     
     def __init__(self, log='', time='', event='', \
@@ -339,3 +347,54 @@ class Webhook(BaseModel):
         ret_val = self.__dict__.copy()
         ret_val['from'] = self._from
         return ret_val
+    
+## Stats
+##
+
+class Team(BaseModel):
+
+    def __init__(self, private_domains=None, sms_numbers=None, members=None, plan_data=None, 
+                 _id=None, plan=None, team_name=None, token=None, status=None, *args, **kwargs):
+        self.private_domains = private_domains if private_domains else []
+        self.sms_numbers = sms_numbers if sms_numbers else []
+        self.members = members if members else []
+        # self.plan_data = plan_data if isinstance(plan_data, PlanData) else PlanData(plan_data) if plan_data else None
+        self._id = _id
+        self.plan = plan
+        self.team_name = team_name
+        self.token = token
+        self.status = status
+
+    def __str__(self):
+        return str(self.__dict__.copy())
+
+    def to_json(self):
+        ret_val = self.__dict__.copy()
+        ret_val['plan_data'] = self.plan_data.to_json() if self.plan_data else None
+        ret_val['private_domains'] = [domain.to_json() for domain in self.private_domains]
+        ret_val['sms_numbers'] = [number.to_json() for number in self.sms_numbers]
+        ret_val['members'] = [member.to_json() for member in self.members]
+        return ret_val
+    
+class Stats(BaseModel):
+
+    def __init__(self, stats=None, *args, **kwargs):
+        self.stats = stats if stats else []
+
+    def __str__(self):
+        return str(self.__dict__.copy())
+
+    def to_json(self):
+        return {"stats": [stat.to_json() for stat in self.stats]}
+
+class TeamInfo(BaseModel):
+
+    def __init__(self, server_time=None, domains=None, *args, **kwargs):
+        self.server_time = server_time
+        self.domains = domains if domains else []
+
+    def __str__(self):
+        return str(self.__dict__.copy())
+
+    def to_json(self):
+        return {"server_time": self.server_time, "domains": self.domains}

@@ -17,7 +17,8 @@ class Mailinator:
 
     __headers = {}
     __base_url = 'https://api.mailinator.com/api/v2'
-    __version = '0.0.6'  # Change this to your SDK version
+    __version = '0.0.7'  # Change this to your SDK version
+    __timeout = 125 # Set timeout to 65 sec
 
     def __init__(self, token=None):
         self.token = token
@@ -32,13 +33,13 @@ class Mailinator:
 
     def request( self, request_data ):
         if request_data.method == RequestMethod.GET:
-            response = requests.get(request_data.url, headers=self.headers)
+            response = requests.get(request_data.url, headers=self.headers, timeout=self.__timeout)
         elif request_data.method == RequestMethod.POST:
-            response = requests.post(request_data.url, json=request_data.json, headers=self.headers)
+            response = requests.post(request_data.url, json=request_data.json, headers=self.headers, timeout=self.__timeout)
         elif request_data.method == RequestMethod.PUT:
-            response = requests.put(request_data.url, headers=self.headers)
+            response = requests.put(request_data.url, headers=self.headers, timeout=self.__timeout)
         elif request_data.method == RequestMethod.DELETE:
-            response = requests.delete(request_data.url, headers=self.headers)
+            response = requests.delete(request_data.url, headers=self.headers, timeout=self.__timeout)
         else:
             raise MailinatorException(f"Method not identified {request_data.method}")
 
