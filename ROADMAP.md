@@ -1,20 +1,35 @@
 # Roadmap
 
-This document tracks planned improvements for the Mailinator Python client.
+This roadmap tracks the Python SDK modernization work in strict sequence.
 
-## Current Priorities
+## Sequence
 
-- [ ] Assess SDK/API parity and gaps
-- [ ] Review dependency/runtime compatibility
-- [ ] Define release milestones
+1. Add structural docs (`ROADMAP.md`, `CHANGELOG.md`, `EXAMPLEs.md`, `AI_INSTRUCTIONS.md` updates).
+2. Define Python support policy (supported Python versions and test matrix).
+3. Set package/version source of truth and align SDK/package versioning.
+4. Add CI quality gates (lint, tests, build, install smoke test).
+5. Document Python release mechanics (build, twine, TestPyPI/PyPI workflow, credentials).
+6. Rewrite `README.md` to introduce Mailinator, link docs, and provide high-level SDK usage guidance.
+7. Move detailed example code out of `README.md` into `EXAMPLEs.md`.
+8. Update outdated dependencies.
+9. Update version number.
+10. Publish these documentation/dependency/version updates as a minor release.
+11. Rewrite remaining JS-specific sections in `AI_INSTRUCTIONS.md` (especially gap-analysis workflow) for Python.
+12. Define a repeatable gap-analysis report format (missing operations, URL mismatches, query/model gaps, planned fixes).
+13. Run gap analysis against the OpenAPI specification and produce a prioritized implementation plan.
+14. Mark deprecated endpoints as deprecated in code so users are warned.
+15. Fix URL path inconsistencies between the SDK and OpenAPI specification.
+16. Add optional `delete` query parameter to Get Inbox method.
+17. Document compatibility/migration notes in `CHANGELOG.md` and README for endpoint/deprecation changes.
+18. Publish the API-alignment changes.
 
-## Backlog
+## Current Status
 
-- [ ] Add typed models and improved validation
-- [ ] Expand tests and CI coverage
-- [ ] Improve examples and developer docs
-
-## Notes
-
-- Keep items scoped and prioritized.
-- Link issues/PRs as work is scheduled.
+- [x] Step 1 complete.
+- [x] Step 3 complete.
+- [x] Step 6 complete.
+- [x] Step 7 complete.
+- [x] Step 11 complete.
+- [ ] Steps 2, 4-5 pending.
+- [ ] Steps 8-10 pending.
+- [ ] Steps 12-18 pending.
