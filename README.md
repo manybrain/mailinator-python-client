@@ -1,10 +1,14 @@
-# Official Mailinator Python Client
+# Mailinator Python SDK
 
-Python SDK for the [Mailinator](https://www.mailinator.com/) REST API.
+The official Mailinator Python SDK. This REST API client is implemented as a thin wrapper around the [Mailinator API](https://www.mailinator.com/documentation/docs/api/index.html). The OpenAPI specification is the source of truth.
+
+
+## API Reference
+
+See [Mailinator's API Reference](https://www.mailinator.com/documentation/docs/api/index.html) for all of the currently available API endpoints.
 
 ## Documentation
 
-- Mailinator API docs: <https://manybrain.github.io/mailinatordocs/#operation>
 - OpenAPI spec: <https://github.com/manybrain/mailinatordocs/blob/main/openapi/mailinator-api.yaml>
 - SDK examples: [`EXAMPLEs.md`](EXAMPLEs.md)
 
