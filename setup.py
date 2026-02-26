@@ -15,8 +15,8 @@ def read_version():
 setuptools.setup(
     name="mailinator_python_client_2",
     version=read_version(),
-    author="Marian Melnychuk",
-    author_email="marian.melnychuk@gmail.com",
+    author="Manybrain, LLC",
+    author_email="support@manybrain.com",
     description="SDK for Mailinator",
     long_description="SDK for Mailinator",
     long_description_content_type="text/markdown",
