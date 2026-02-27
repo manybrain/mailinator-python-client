@@ -17,11 +17,12 @@ This roadmap tracks the Python SDK modernization work in strict sequence.
 11. Rewrite remaining JS-specific sections in `AI_INSTRUCTIONS.md` (especially gap-analysis workflow) for Python.
 12. Define a repeatable gap-analysis report format (missing operations, URL mismatches, query/model gaps, planned fixes).
 13. Run gap analysis against the OpenAPI specification and produce a prioritized implementation plan.
-14. Mark deprecated endpoints as deprecated in code so users are warned.
+14. Mark deprecated endpoints as deprecated in code so users are warned. ✅ Completed for rules endpoints.
 15. Fix URL path inconsistencies between the SDK and OpenAPI specification.
 16. Add optional `delete` query parameter to Get Inbox method.
-17. Document compatibility/migration notes in `CHANGELOG.md` and README for endpoint/deprecation changes.
-18. Publish the API-alignment changes.
+17. Implement Streaming Messages endpoint support (`/domains/private/stream/` and `/domains/private/stream/{inbox}`) with documented query parameters.
+18. Document compatibility/migration notes in `CHANGELOG.md` and README for endpoint/deprecation changes.
+19. Publish the API-alignment changes.
 
 ## Current Status
 
@@ -32,4 +33,6 @@ This roadmap tracks the Python SDK modernization work in strict sequence.
 - [x] Step 11 complete.
 - [ ] Steps 2, 4-5 pending.
 - [ ] Steps 8-10 pending.
-- [ ] Steps 12-18 pending.
+- [ ] Steps 12-13 pending.
+- [x] Step 14 complete (rules endpoints now emit deprecation warnings).
+- [ ] Steps 15-19 pending.

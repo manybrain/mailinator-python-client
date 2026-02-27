@@ -12,7 +12,14 @@ The format is based on Keep a Changelog and this project aims to follow Semantic
 
 ### Changed
 
-- N/A
+- Marked all rules endpoint request classes as deprecated in code.
+- Added runtime `DeprecationWarning` emissions for:
+  - `CreateRuleRequest`
+  - `EnableRuleRequest`
+  - `DisableRuleRequest`
+  - `GetRulesRequest`
+  - `GetRuleRequest`
+  - `DeleteRuleRequest`
 
 ### Fixed
 
