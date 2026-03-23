@@ -8,7 +8,7 @@ The format is based on Keep a Changelog and this project aims to follow Semantic
 
 ### Added
 
-- N/A
+- `GetInboxRequest` supports the `delete` query parameter (added 2025-03-05).
 
 ### Changed
 
