@@ -36,4 +36,8 @@ Run tests with:
 python -m pytest -s
 ```
 
-Most tests require valid environment values. Use `tests/localsettings.py.template` as the source for local test configuration.
+Most tests require valid environment values.
+
+Use either:
+- `.env` (recommended): copy `.env.example` to `.env` and fill in values.
+- `tests/localsettings.py`: copy `tests/localsettings.py.template` to `tests/localsettings.py` (it also loads `.env` if present).

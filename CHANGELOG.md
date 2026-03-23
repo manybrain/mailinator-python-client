@@ -8,11 +8,26 @@ The format is based on Keep a Changelog and this project aims to follow Semantic
 
 ### Added
 
-- Initialize project changelog.
+- N/A
+
+### Changed
+
+- N/A
+
+### Fixed
+
+- N/A
+
+## [1.0.8] - 2026-03-23
+
+### Added
+
+- `.env`-based configuration for integration tests (loader in `tests/dotenv.py` and example file `.env.example`).
 
 ### Changed
 
 - Marked all rules endpoint request classes as deprecated in code.
+- Marked domain management write requests as deprecated in code (`CreateDomainRequest`, `DeleteDomainRequest`).
 - Added runtime `DeprecationWarning` emissions for:
   - `CreateRuleRequest`
   - `EnableRuleRequest`
@@ -20,7 +35,10 @@ The format is based on Keep a Changelog and this project aims to follow Semantic
   - `GetRulesRequest`
   - `GetRuleRequest`
   - `DeleteRuleRequest`
+  - `CreateDomainRequest`
+  - `DeleteDomainRequest`
+- Integration tests now load `.env` automatically and skip when required settings are missing (instead of exiting immediately).
 
 ### Fixed
 
-- N/A
+- Fixed typos in `tests/test_mailinator.py` that prevented the test module from running.

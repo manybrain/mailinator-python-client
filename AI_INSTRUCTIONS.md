@@ -74,7 +74,7 @@ Extract every `paths` entry. For each path, record:
 - The tag (maps to the SDK module directory)
 - All query parameters defined under `parameters`
 
-### Step 2 — Catalogue the SDK
+### Step 2 — Catalog the SDK
 
 For each request class under `mailinator/*.py`:
 1. Identify classes ending in `Request` that inherit from `RequestData`.
