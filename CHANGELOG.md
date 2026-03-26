@@ -4,30 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project aims to follow Semantic Versioning.
 
-## [Unreleased]
-
-### Added
-
-- `GetInboxRequest` supports the `delete` query parameter (added 2025-03-05).
-
-### Changed
-
-- N/A
-
-### Fixed
-
-- N/A
-
-## [1.0.8] - 2026-03-23
+## [1.0.8]
 
 ### Added
 
 - `.env`-based configuration for integration tests (loader in `tests/dotenv.py` and example file `.env.example`).
+- `GetInboxRequest` supports the `delete` query parameter (added 2025-03-05).
 
 ### Changed
 
 - Marked all rules endpoint request classes as deprecated in code.
 - Marked domain management write requests as deprecated in code (`CreateDomainRequest`, `DeleteDomainRequest`).
+- Marked `GetLatestMessagesRequest` and `GetLatestInboxMessagesRequest` as deprecated (emits `DeprecationWarning`).
 - Added runtime `DeprecationWarning` emissions for:
   - `CreateRuleRequest`
   - `EnableRuleRequest`

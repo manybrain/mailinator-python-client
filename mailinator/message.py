@@ -1,5 +1,14 @@
+import warnings
+
 from .base import RequestData, RequestMethod
 from .models import *
+
+def _warn_latest_endpoints_deprecated(class_name):
+    warnings.warn(
+        f"{class_name} is deprecated. The `*/messages/*` wildcard endpoints are not part of the published API spec and may be removed in a future release.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
 
 class GetInboxRequest(RequestData):
     def __init__(self, domain, inbox, skip=0, limit=50, sort='descending', \
@@ -193,6 +202,7 @@ class GetInboxMessageRawRequest(RequestData):
 
 class GetLatestMessagesRequest(RequestData):
     def __init__(self, domain):
+        _warn_latest_endpoints_deprecated(self.__class__.__name__)
         self.check_parameter(domain, 'domain')
 
         url=f'{self._base_url}/domains/{domain}/messages/*'
@@ -200,6 +210,7 @@ class GetLatestMessagesRequest(RequestData):
 
 class GetLatestInboxMessagesRequest(RequestData):
     def __init__(self, domain, inbox):
+        _warn_latest_endpoints_deprecated(self.__class__.__name__)
         self.check_parameter(domain, 'domain')
         self.check_parameter(inbox, 'inbox')
 
