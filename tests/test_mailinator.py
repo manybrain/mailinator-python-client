@@ -4,18 +4,48 @@ import string
 import requests
 import time
 import json
+import os
 from os.path import basename
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import COMMASPACE, formatdate
-import sys
+import pytest
 
 
 # Project includes
 from mailinator import *
 from utils import get_logger
 logger = get_logger()
+
+from .dotenv import env_bool, env_int, load_dotenv
+
+# Load `.env` (if present) before reading environment-driven settings.
+load_dotenv()
+
+
+# Default configuration from env vars (localsettings.py can override these if present).
+DELETE_REQUESTS = env_bool("DELETE_REQUESTS", False)
+SEND_EMAIL_ENABLED = env_bool("SEND_EMAIL_ENABLED", False)
+
+API_TOKEN = os.getenv("API_TOKEN", "")
+INBOX = os.getenv("INBOX", "")
+DOMAIN = os.getenv("DOMAIN", "")
+SMS_DOMAIN = os.getenv("SMS_DOMAIN", "")
+SMS_PHONE_NUMBER = os.getenv("SMS_PHONE_NUMBER", "")
+MESSAGE_WITH_ATTACHMENT_ID = os.getenv("MESSAGE_WITH_ATTACHMENT_ID", "")
+WEBHOOKTOKEN_PRIVATEDOMAIN = os.getenv("WEBHOOKTOKEN_PRIVATEDOMAIN", "")
+WEBHOOKTOKEN_CUSTOMSERVICE = os.getenv("WEBHOOKTOKEN_CUSTOMSERVICE", "")
+AUTH_SECRET = os.getenv("AUTH_SECRET", "")
+AUTH_ID = os.getenv("AUTH_ID", "")
+WEBHOOK_INBOX = os.getenv("WEBHOOK_INBOX", "")
+WEBHOOK_CUSTOMSERVICE = os.getenv("WEBHOOK_CUSTOMSERVICE", "")
+
+SMTP_SERVER = os.getenv("SMTP_SERVER", "")
+SMTP_PORT = env_int("SMTP_PORT", 0)
+SMTP_USERNAME = os.getenv("SMTP_USERNAME", "")
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
+SMTP_SENDER = os.getenv("SMTP_SENDER", "")
 
 
 # Import localsettings if any
@@ -24,11 +54,11 @@ try:
 except ImportError:
     pass
 
-
-try: DELETE_REQUESTS
-except: 
-    print("Remember to copy the localsettings file!")
-    sys.exit(0)
+if not API_TOKEN or not DOMAIN or not INBOX:
+    pytest.skip(
+        "Integration tests require API_TOKEN, DOMAIN, and INBOX (set via `.env` or env vars).",
+        allow_module_level=True,
+    )
 
 # def send_mail(send_from, send_to, subject, text, files=None):
 #     assert isinstance(send_to, list)
@@ -78,6 +108,8 @@ class TestClass:
     mailinator_without_api_token = Mailinator()
 
     def test_authenticators(self):
+        if not AUTH_SECRET or not AUTH_ID:
+            pytest.skip("Set AUTH_SECRET and AUTH_ID to run authenticator tests.")
         logger.info("+++ test_authenticators +++")
 
         # InstantTOTP2FACode
@@ -111,6 +143,8 @@ class TestClass:
         print("DONE!")
 
     def test_fetch_inbox(self):
+        if not MESSAGE_WITH_ATTACHMENT_ID:
+            pytest.skip("Set MESSAGE_WITH_ATTACHMENT_ID to run inbox/attachment tests.")
         logger.info("+++ test_fetch_inbox +++")
 
         if SEND_EMAIL_ENABLED:
@@ -132,7 +166,7 @@ class TestClass:
 
         # Fetch Inbox With Full Param
         print("Fetching Inbox With Full Param...")
-        inbox = self.mailinator.request( GetInboxRequest(DOMAIN, INBOX, full=true, limit=1) )
+        inbox = self.mailinator.request( GetInboxRequest(DOMAIN, INBOX, full=True, limit=1) )
         assert len(inbox.msgs) == 1        
         print("DONE!")
         
@@ -211,7 +245,7 @@ class TestClass:
         print("links ", links )
         print("DONE!")
 
-        Get Message links full
+        # Get Message links full
         print("Fetching Links Full...")
         linksFull = self.mailinator.request( GetMessageLinksFullRequest(DOMAIN, message_id) )
         print("links full ", linksFull )
@@ -274,6 +308,8 @@ class TestClass:
 
 
     def test_fetch_sms_inbox(self):
+        if not SMS_DOMAIN or not SMS_PHONE_NUMBER:
+            pytest.skip("Set SMS_DOMAIN and SMS_PHONE_NUMBER to run SMS inbox tests.")
         logger.info("+++ test_fetch_sms_inbox +++")
 
         # Fetch Inbox
@@ -355,6 +391,15 @@ class TestClass:
 
 
     def test_webhooks(self):
+        if (
+            not WEBHOOKTOKEN_PRIVATEDOMAIN
+            or not WEBHOOKTOKEN_CUSTOMSERVICE
+            or not WEBHOOK_INBOX
+            or not WEBHOOK_CUSTOMSERVICE
+        ):
+            pytest.skip(
+                "Set WEBHOOKTOKEN_PRIVATEDOMAIN, WEBHOOKTOKEN_CUSTOMSERVICE, WEBHOOK_INBOX, and WEBHOOK_CUSTOMSERVICE to run webhook tests."
+            )
         logger.info("+++ test_webhooks +++")
 
         webhook = Webhook(_from="MyMailinatorPythonTest", subject="testing message", text="hello world", to="jack")

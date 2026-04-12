@@ -1,15 +1,24 @@
 import setuptools
+from pathlib import Path
+import re
 
-with open("README.md", "r") as fh:
+with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
+
+def read_version():
+    init_text = Path("mailinator/__init__.py").read_text(encoding="utf-8")
+    match = re.search(r'^__version__\s*=\s*"([^"]+)"', init_text, re.MULTILINE)
+    if not match:
+        raise RuntimeError("Unable to find __version__ in mailinator/__init__.py")
+    return match.group(1)
 
 setuptools.setup(
     name="mailinator_python_client_2",
-    version="0.0.8",
-    author="Marian Melnychuk",
-    author_email="marian.melnychuk@gmail.com",
+    version=read_version(),
+    author="Manybrain, LLC",
+    author_email="support@manybrain.com",
     description="SDK for Mailinator",
-    long_description="SDK for Mailinator",
+    long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/manybrain/mailinator-python-client",
     packages=setuptools.find_packages(),

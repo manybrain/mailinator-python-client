@@ -1,9 +1,13 @@
-
 import os
 
+from .dotenv import env_bool, env_int, load_dotenv
+
+# Load `.env` (if present) so this file can be used with either approach.
+load_dotenv()
+
 # Tests configuration
-DELETE_REQUESTS = os.getenv('DELETE_REQUESTS', False)   # SET to TRUE if test perform delete requests
-SEND_EMAIL_ENABLED = os.getenv('SEND_EMAIL_ENABLED', False)   # SET to TRUE if tests to be sending emails
+DELETE_REQUESTS = env_bool("DELETE_REQUESTS", False)  # Set true to enable delete requests
+SEND_EMAIL_ENABLED = env_bool("SEND_EMAIL_ENABLED", False)  # Set true to send emails during tests
 
 # MAILINATOR
 API_TOKEN = os.getenv('API_TOKEN', '')
@@ -21,8 +25,7 @@ WEBHOOK_CUSTOMSERVICE = os.getenv('WEBHOOK_CUSTOMSERVICE', '')
 
 # SMTP Variables
 SMTP_SERVER = os.getenv('SMTP_SERVER', '')
-SMTP_PORT = int(os.getenv('SMTP_PORT', ''))
+SMTP_PORT = env_int("SMTP_PORT", 0)
 SMTP_USERNAME = os.getenv('SMTP_USERNAME', '')
 SMTP_PASSWORD = os.getenv('SMTP_PASSWORD', '')
 SMTP_SENDER = os.getenv('SMTP_SENDER', '')
-

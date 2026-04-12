@@ -3,6 +3,7 @@ from http import HTTPStatus
 
 
 from .base import RequestData, RequestMethod
+from . import __version__ as package_version
 
 
 class MailinatorException(Exception):
@@ -17,7 +18,7 @@ class Mailinator:
 
     __headers = {}
     __base_url = 'https://api.mailinator.com/api/v2'
-    __version = '0.0.7'  # Change this to your SDK version
+    __version = package_version
     __timeout = 125 # Set timeout to 65 sec
 
     def __init__(self, token=None):
@@ -59,4 +60,3 @@ class Mailinator:
                 return response.json()
         else:
             return response
-
