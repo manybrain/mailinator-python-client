@@ -30,3 +30,4 @@ The format is based on Keep a Changelog and this project aims to follow Semantic
 ### Fixed
 
 - Fixed typos in `tests/test_mailinator.py` that prevented the test module from running.
+- Fixed `DisableRuleRequest` URL to use `action=disable` (was `action=enable`).

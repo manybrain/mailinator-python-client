@@ -41,7 +41,7 @@ class DisableRuleRequest(RequestData):
         self.check_parameter(domain, 'domain')
         self.check_parameter(rule_id, 'rule_id')
 
-        url=f'{self._base_url}/domains/{domain}/rules/{rule_id}?action=enable'
+        url=f'{self._base_url}/domains/{domain}/rules/{rule_id}?action=disable'
         super().__init__(RequestMethod.PUT, url)
 
 class GetRulesRequest(RequestData):
