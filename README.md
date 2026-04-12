@@ -10,7 +10,7 @@ See [Mailinator's API Reference](https://www.mailinator.com/documentation/docs/a
 ## Documentation
 
 - OpenAPI spec: <https://github.com/manybrain/mailinatordocs/blob/main/openapi/mailinator-api.yaml>
-- SDK examples: [`EXAMPLEs.md`](EXAMPLEs.md)
+- SDK examples: [`EXAMPLE.md`](EXAMPLE.md)
 
 ## Installation
 
@@ -26,7 +26,7 @@ from mailinator import Mailinator
 client = Mailinator("YOUR_API_TOKEN")
 ```
 
-For request examples (inbox, messages, domains, rules, webhooks, and stats), see [`EXAMPLEs.md`](EXAMPLEs.md).
+For request examples (inbox, messages, domains, rules, webhooks, and stats), see [`EXAMPLE.md`](EXAMPLE.md).
 
 ## Tests
 
