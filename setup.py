@@ -2,7 +2,7 @@ import setuptools
 from pathlib import Path
 import re
 
-with open("README.md", "r") as fh:
+with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 def read_version():
@@ -18,7 +18,7 @@ setuptools.setup(
     author="Manybrain, LLC",
     author_email="support@manybrain.com",
     description="SDK for Mailinator",
-    long_description="SDK for Mailinator",
+    long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/manybrain/mailinator-python-client",
     packages=setuptools.find_packages(),
