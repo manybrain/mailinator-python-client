@@ -30,14 +30,28 @@ For request examples (inbox, messages, domains, rules, webhooks, and stats), see
 
 ## Tests
 
-Run tests with:
+Run the mocked tests with:
 
 ```bash
-python -m pytest -s
+python -m pytest tests/test_mailinator_mocked.py
 ```
 
-Most tests require valid environment values.
+These tests do not make network requests and do not require Mailinator credentials.
+
+Run the integration tests with:
+
+```bash
+python -m pytest tests/test_mailinator.py -s
+```
+
+Integration tests require valid environment values and will skip when required settings are missing.
 
 Use either:
 - `.env` (recommended): copy `.env.example` to `.env` and fill in values.
 - `tests/localsettings.py`: copy `tests/localsettings.py.template` to `tests/localsettings.py` (it also loads `.env` if present).
+
+Run the full suite with:
+
+```bash
+python -m pytest
+```
