@@ -60,13 +60,8 @@ Fix SDK paths where an implemented operation maps to a spec operation but the pa
   - Current SDK: `POST /api/v2/domains/private/webhook/{inbox}?whtoken=...`
   - Spec: `POST /api/v2/domains/{domain}/webhook/{inbox}?whtoken=...`
   - Needs design decision because SDK currently takes `whToken` and `inbox` but no `domain`.
-- [ ] `GetTeamStatsRequest`
-  - Current SDK: `GET /api/v2/team/stats/`
-  - Spec: `GET /api/v2/team/stats`
-- [ ] `GetDomainRequest`
-  - Current SDK: `GET /api/v2/domains/{domain}/`
-  - Spec: `GET /api/v2/domains/{domain_name}`
 
+Trailing-slash-only differences are intentionally not listed as actionable gaps because the Mailinator API accepts both forms.
 
 ### D. Query parameter gaps
 
