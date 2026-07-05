@@ -9,6 +9,12 @@ The format is based on Keep a Changelog and this project aims to follow Semantic
 ### Added
 
 - Mocked endpoint tests covering SDK request dispatch, response handling, model deserialization, warnings, and required parameter validation without Mailinator credentials.
+- Forward-looking mocked tests for newly planned message retrieval and stream endpoints.
+
+### Changed
+
+- Raised the minimum supported Python version to 3.9.
+- Updated development and release dependency pins in `requirements.txt`.
 
 ## [1.0.8]
 
