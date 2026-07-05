@@ -38,17 +38,18 @@ def json_response(data, status_code=HTTPStatus.OK):
 MESSAGE_SUMMARY_PAYLOAD = {
     "id": MESSAGE_ID,
     "subject": "Mocked message",
-    "from": "sender@example.com",
-    "origfrom": "sender@example.com",
+    "domain": DOMAIN,
+    "from": "Sender",
+    "origfrom": "Sender <sender@example.com>",
     "to": INBOX,
     "time": 1710000000000,
-    "seconds_ago": 3,
-    "source": "SMTP",
+    "seconds_ago": 721029,
+    "source": "EMAIL",
 }
 
 INBOX_MESSAGES_PAYLOAD = {
-    "domain": DOMAIN,
-    "to": None,
+    "domain": "private",
+    "to": "*",
     "msgs": [MESSAGE_SUMMARY_PAYLOAD],
     "cursor": "cursor-123",
 }
@@ -56,7 +57,7 @@ INBOX_MESSAGES_PAYLOAD = {
 MESSAGE_SUMMARY_ONLY_PAYLOAD = {
     "summary": {
         "subject": "Mocked message",
-        "domain": DOMAIN,
+        "domain": "public",
         "from": "sender@example.com",
         "id": MESSAGE_ID,
         "to": INBOX,
@@ -65,15 +66,15 @@ MESSAGE_SUMMARY_ONLY_PAYLOAD = {
 }
 
 MESSAGE_TEXT_ONLY_PAYLOAD = {
-    "text": "Extracted real text from the mocked message.",
+    "text": "Extracted real text from the mocked message. [link](https://example.com)",
 }
 
 MESSAGE_TEXT_PLAIN_ONLY_PAYLOAD = {
-    "text/plain": "Plain text body from the mocked message.",
+    "text/plain": "Plain text body from the mocked message.r\n\r\n[link](https://example.com)",
 }
 
 MESSAGE_TEXT_HTML_ONLY_PAYLOAD = {
-    "text/html": "<p>HTML body from the mocked message.</p>",
+    "text/html": "<head>\r\n<title>\r\n</title>\r\n<!--[if !mso]><!-->\r\n<meta content=\"IE=edge\" http-equiv=\"X-UA-Compatible\">\r\n<!--<![endif]-->\r\n<meta content=\"text/html; charset=utf-8\" http-equiv=\"Content-Type\">\r\n<meta content=\"width=device-width, initial-scale=1\" name=\"viewport\">\r\n<!--[if mso]>\r\n        <noscript>\r\n        <xml>\r\n        <o:OfficeDocumentSettings>\r\n          <o:AllowPNG/>\r\n          <o:PixelsPerInch>96</o:PixelsPerInch>\r\n        </o:OfficeDocumentSettings>\r\n        </xml>\r\n        </noscript>\r\n        <![endif]-->\r\n<!--[if lte mso 11]>\r\n        <style type=\"text/css\" data-inliner=\"ignore\">\r\n          .mj-outlook-group-fix { width:100% !important; }\r\n        </style>\r\n        <![endif]-->\r\n<!--[if !mso]><!--><!--<![endif]-->\r\n<style>a:not([name]) {color:#15c;text-decoration:underline}\r\na:link {color:#15c;text-decoration:underline}\r\na:visited {color:#15c;text-decoration:underline}\r\na:active {color:#15c;text-decoration:underline}\r\na:hover {color:#15c;text-decoration:underline}</style><style>@import url(https://static-forms.klaviyo.com/fonts/api/v1/N8GZZz/custom_fonts.css);\r\n#outlook a {\r\n    padding: 0\r\n    }\r\nbody {\r\n    margin: 0;\r\n    padding: 0;\r\n    -webkit-text-size-adjust: 100%;\r\n    -ms-text-size-adjust: 100%\r\n    }\r\ntable, td {\r\n    border-collapse: collapse;\r\n    mso-table-lspace: 0;\r\n    mso-table-rspace: 0\r\n    }\r\nimg {\r\n    border: 0;\r\n    line-height: 100%;\r\n    outline: none;\r\n    text-decoration: none;\r\n    -ms-interpolation-mode: bicubic\r\n    }\r\np {\r\n    display: block;\r\n    margin: 13px 0\r\n    }\r\n@media only screen and (min-width: 480px) {\r\n    .mj-column-per-100 {\r\n        width: 100% !important;\r\n        max-width: 100%\r\n        }\r\n    }\r\n@media only screen and (max-width: 480px) {\r\n    div.kl-row.colstack div.kl-column {\r\n        display: block !important;\r\n        width: 100% !important\r\n        }\r\n    }\r\n@media only screen and (max-width: 480px) {\r\n    .component-wrapper .mob-no-spc {\r\n        padding-left: 0 !important;\r\n        padding-right: 0 !important\r\n        }\r\n    }\r\n@media only screen and (max-width: 480px) {\r\n    td.kl-img-base-auto-width {\r\n        width: 100% !important\r\n        }\r\n    }\r\n@media only screen and (max-width: 480px) {\r\n    .kl-table-subblock.use-legacy-mobile-padding {\r\n        padding-left: 9px !important;\r\n        padding-right: 9px !important\r\n        }\r\n    }\r\n@media screen and (max-width: 480px) {\r\n    .kl-sl-stk {\r\n        display: block !important;\r\n        width: 100% !important;\r\n        padding: 0 0 9px !important;\r\n        text-align: center !important\r\n        }\r\n    .kl-sl-stk.lbls {\r\n        padding: 0 !important\r\n        }\r\n    .kl-sl-stk.spcblk {\r\n        display: none !important\r\n        }\r\n    }\r\n@media only screen and (max-width: 480px) {\r\n    td.mobile-only {\r\n        display: table-cell !important\r\n        }\r\n    div.mobile-only {\r\n        display: block !important\r\n        }\r\n    table.mobile-only {\r\n        display: table !important\r\n        }\r\n    .desktop-only {\r\n        display: none !important\r\n        }\r\n    }\r\n@media only screen and (max-width: 480px) {\r\n    .table-mobile-only {\r\n        display: table-cell !important;\r\n        max-height: none !important\r\n        }\r\n    .table-mobile-only.block {\r\n        display: block !important\r\n        }\r\n    .table-mobile-only.inline-block {\r\n        display: inline-block !important\r\n        }\r\n    .table-desktop-only {\r\n        max-height: 0 !important;\r\n        display: none !important;\r\n        mso-hide: all !important;\r\n        overflow: hidden !important\r\n        }\r\n    }\r\n@media only screen and (max-width: 480px) {\r\n    body.mce-content-body, /* NOTE: needed for internal tinymce styles */.kl-text > div, .kl-table-subblock > div, .kl-split-subblock > div {\r\n        font-size: 14px !important;\r\n        line-height: 1.3 !important\r\n        }\r\n    }\r\n@media only screen and (max-width: 480px) {\r\n    h1 {\r\n        font-size: 40px !important;\r\n        line-height: 1.1 !important\r\n        }\r\n    }\r\n@media only screen and (max-width: 480px) {\r\n    h2 {\r\n        font-size: 32px !important;\r\n        line-height: 1.1 !important\r\n        }\r\n    }\r\n@media only screen and (max-width: 480px) {\r\n    h3 {\r\n        font-size: 24px !important;\r\n        line-height: 1.1 !important\r\n        }\r\n    }\r\n@media only screen and (max-width: 480px) {\r\n    h4 {\r\n        font-size: 18px !important;\r\n        line-height: 1.1 !important\r\n        }\r\n    }\r\n@media only screen and (max-width: 480px) {\r\n    .root-container {\r\n        width: 100% !important\r\n        }\r\n    .root-container-spacing {\r\n        padding: 0 !important\r\n        }\r\n    .content-padding {\r\n        padding-left: 0 !important;\r\n        padding-right: 0 !important\r\n        }\r\n    .content-padding.kl-first {\r\n        padding-top: 0 !important\r\n        }\r\n    .content-padding.kl-last {\r\n        padding-bottom: 0 !important\r\n        }\r\n    .kl-column > .component-wrapper {\r\n        padding-left: 0 !important;\r\n        padding-right: 0 !important;\r\n        width: unset !important\r\n        }\r\n    .kl-text {\r\n        padding-right: 18px !important;\r\n        padding-left: 18px !important\r\n        }\r\n    }</style></head>",
 }
 
 MESSAGE_HEADERS_ONLY_PAYLOAD = {
@@ -86,6 +87,7 @@ MESSAGE_HEADERS_ONLY_PAYLOAD = {
         "subject": "Mocked message",
         "content-type": "text/plain; charset=utf-8",
         "received": ["from mail.example.com by mailinator.com"],
+        "dkim-signature": "v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailinator.com; s=mailinator; h=from:to:subject:date:message-id; bh=abc123; b=def456",
     }
 }
 
