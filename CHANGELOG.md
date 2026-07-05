@@ -13,6 +13,7 @@ The format is based on Keep a Changelog and this project aims to follow Semantic
 
 ### Changed
 
+- Deprecated singular authenticator request classes and routed them through the canonical `/authenticators/` endpoints. These are duplicate endpoints.
 - Raised the minimum supported Python version to 3.9.
 - Updated development and release dependency pins in `requirements.txt`.
 

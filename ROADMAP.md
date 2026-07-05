@@ -5,7 +5,6 @@ This roadmap tracks the Python SDK modernization work in strict sequence.
 ### Prioritization
 
 
-
 ### A. In the spec but missing from the SDK
 
 Add request classes for OpenAPI operations that do not currently have SDK equivalents:
@@ -42,10 +41,6 @@ Add request classes for OpenAPI operations that do not currently have SDK equiva
 
 Keep these for now, but mark compatibility/deprecation decisions before changing public API:
 
-- [ ] Authenticator endpoints absent from the spec:
-  - `GetAuthenticatorsRequest`: `GET /api/v2/authenticators/`
-  - `GetAuthenticatorRequest`: `GET /api/v2/authenticator/`
-  - `GetAuthenticatorByIdRequest`: `GET /api/v2/authenticator/{id}`
 - [ ] Webhook custom-service endpoints absent from the spec:
   - `PrivateCustomServiceWebhookRequest`: `POST /api/v2/domains/private/{customService}?whtoken=...`
   - `PrivateCustomServiceInboxWebhookRequest`: `POST /api/v2/domains/private/{customService}/{inbox}?whtoken=...`
