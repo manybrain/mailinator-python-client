@@ -60,3 +60,20 @@ class Mailinator:
                 return response.json()
         else:
             return response
+
+
+from .message import (
+    GetMessageHeadersRequest,
+    GetMessageSummaryRequest,
+    GetMessageTextHtmlRequest,
+    GetMessageTextPlainRequest,
+    GetMessageTextRequest,
+    ListDomainMessagesRequest,
+)
+from .models import (
+    MessageHeaders,
+    MessageSummary,
+    MessageText,
+    MessageTextHtml,
+    MessageTextPlain,
+)

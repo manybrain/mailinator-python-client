@@ -10,6 +10,7 @@ The format is based on Keep a Changelog and this project aims to follow Semantic
 
 - Mocked endpoint tests covering SDK request dispatch, response handling, model deserialization, warnings, and required parameter validation without Mailinator credentials.
 - Forward-looking mocked tests for newly planned message retrieval and stream endpoints.
+- SDK support for domain message listing and message summary/text/header retrieval request classes.
 
 ### Changed
 

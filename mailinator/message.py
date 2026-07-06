@@ -10,6 +10,11 @@ def _warn_latest_endpoints_deprecated(class_name):
         stacklevel=2,
     )
 
+
+def _build_query_string(params):
+    return '&'.join(f"{key}={value}" for key, value in params.items() if value is not None)
+
+
 class GetInboxRequest(RequestData):
     def __init__(self, domain, inbox, skip=0, limit=50, sort='descending', \
             decode_subject=False, cursor=None, full=None, delete=None, wait=None):
@@ -34,6 +39,30 @@ class GetInboxRequest(RequestData):
         query_string = '&'.join(f"{key}={value}" for key, value in params.items() if value is not None)
 
         # Construct final URL
+        url = f"{base_url}?{query_string}" if query_string else base_url
+
+        super().__init__(RequestMethod.GET, url, model=Inbox)
+
+class ListDomainMessagesRequest(RequestData):
+    def __init__(self, domain, inbox='*', skip=0, limit=50, sort='descending',
+            decode_subject=False, cursor=None, full=None, wait=None, delete=None):
+        self.check_parameter(domain, 'domain')
+
+        base_url = f'{self._base_url}/domains/{domain}/inboxes'
+
+        params = {
+            "inbox": inbox,
+            "skip": skip,
+            "limit": limit,
+            "sort": sort,
+            "decode_subject": decode_subject,
+            "cursor": cursor,
+            "full": full,
+            "wait": wait,
+            "delete": delete
+        }
+
+        query_string = _build_query_string(params)
         url = f"{base_url}?{query_string}" if query_string else base_url
 
         super().__init__(RequestMethod.GET, url, model=Inbox)
@@ -63,6 +92,46 @@ class GetMessageRequest(RequestData):
         url = f"{base_url}?{query_string}" if query_string else base_url
 
         super().__init__(RequestMethod.GET, url, model=Message)
+
+class GetMessageSummaryRequest(RequestData):
+    def __init__(self, domain, message_id):
+        self.check_parameter(domain, 'domain')
+        self.check_parameter(message_id, 'message_id')
+
+        url=f'{self._base_url}/domains/{domain}/messages/{message_id}/summary'
+        super().__init__(RequestMethod.GET, url, model=MessageSummary)
+
+class GetMessageTextRequest(RequestData):
+    def __init__(self, domain, message_id):
+        self.check_parameter(domain, 'domain')
+        self.check_parameter(message_id, 'message_id')
+
+        url=f'{self._base_url}/domains/{domain}/messages/{message_id}/text'
+        super().__init__(RequestMethod.GET, url, model=MessageText)
+
+class GetMessageTextPlainRequest(RequestData):
+    def __init__(self, domain, message_id):
+        self.check_parameter(domain, 'domain')
+        self.check_parameter(message_id, 'message_id')
+
+        url=f'{self._base_url}/domains/{domain}/messages/{message_id}/textplain'
+        super().__init__(RequestMethod.GET, url, model=MessageTextPlain)
+
+class GetMessageTextHtmlRequest(RequestData):
+    def __init__(self, domain, message_id):
+        self.check_parameter(domain, 'domain')
+        self.check_parameter(message_id, 'message_id')
+
+        url=f'{self._base_url}/domains/{domain}/messages/{message_id}/texthtml'
+        super().__init__(RequestMethod.GET, url, model=MessageTextHtml)
+
+class GetMessageHeadersRequest(RequestData):
+    def __init__(self, domain, message_id):
+        self.check_parameter(domain, 'domain')
+        self.check_parameter(message_id, 'message_id')
+
+        url=f'{self._base_url}/domains/{domain}/messages/{message_id}/headers'
+        super().__init__(RequestMethod.GET, url, model=MessageHeaders)
 
 class GetSmsInboxRequest(RequestData):
     def __init__(self, domain, phone_number):

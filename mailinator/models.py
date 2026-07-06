@@ -225,6 +225,47 @@ class Message(BaseModel):
         self.source = source or ''
         self.text = text or ''
 
+class MessageSummary(BaseModel):
+
+    def __init__(self, summary=None, *args, **kwargs):
+        self.summary = summary.copy() if isinstance(summary, dict) else {}
+
+
+class MessageText(BaseModel):
+
+    def __init__(self, text='', *args, **kwargs):
+        self.text = text or ''
+
+
+class MessageTextPlain(BaseModel):
+
+    def __init__(self, text_plain='', *args, **kwargs):
+        if 'text/plain' in kwargs:
+            self.text_plain = kwargs['text/plain']
+        else:
+            self.text_plain = text_plain or ''
+
+    def to_json(self):
+        return {'text/plain': self.text_plain}
+
+
+class MessageTextHtml(BaseModel):
+
+    def __init__(self, text_html='', *args, **kwargs):
+        if 'text/html' in kwargs:
+            self.text_html = kwargs['text/html']
+        else:
+            self.text_html = text_html or ''
+
+    def to_json(self):
+        return {'text/html': self.text_html}
+
+
+class MessageHeaders(BaseModel):
+
+    def __init__(self, headers=None, *args, **kwargs):
+        self.headers = headers.copy() if isinstance(headers, dict) else {}
+
 class LatestMessages(BaseModel):
 
     def __init__(self, to='', msgs=[], *args, **kwargs):
