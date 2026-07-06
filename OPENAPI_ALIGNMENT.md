@@ -1,4 +1,4 @@
-# AI Instructions
+# OpenAPI Alignment Workflow
 
 This document explains the relationship between this Python client and the Mailinator OpenAPI specification.
 
