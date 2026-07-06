@@ -17,7 +17,7 @@ setuptools.setup(
     version=read_version(),
     author="Manybrain, LLC",
     author_email="support@manybrain.com",
-    description="SDK for Mailinator",
+    description="Official SDK for Mailinator",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/manybrain/mailinator-python-client",
