@@ -2,6 +2,30 @@
 
 This roadmap tracks the Python SDK modernization work in strict sequence.
 
+## Python 3.10+ Upgrade
+
+- [x] Raise the minimum supported Python version from 3.9 to 3.10.
+  - Updated `python_requires` and the supported-version classifiers in `setup.py`.
+  - Verified that the complete pinned dependency set resolves for Python 3.10.
+- [x] Upgrade dependencies whose current releases require Python 3.10 or newer.
+  Versions adopted as of 2026-08-10:
+  - `build`: `1.4.4` to `1.5.0`
+  - `importlib-metadata`: `8.7.1` to `9.0.0`
+  - `iniconfig`: `2.1.0` to `2.3.0`
+  - `jaraco.context`: `6.1.1` to `6.1.2`
+  - `jaraco.functools`: `4.4.0` to `4.6.0`
+  - `markdown-it-py`: `3.0.0` to `4.2.0`
+  - `more-itertools`: `10.8.0` to `11.1.0`
+  - `pytest`: `8.4.2` to `9.1.1`
+  - `readme-renderer`: `44.0` to `45.0`
+  - `requests`: `2.32.5` to `2.34.2`
+  - `twine`: `6.2.0` to `7.0.0`
+  - `urllib3`: `2.6.3` to `2.7.0`
+  - `zipp`: `3.23.1` to `4.1.0`
+  - Resolved the complete pinned set together to check transitive compatibility.
+- [ ] Add automated testing across every supported Python version (3.10 through 3.13).
+  - Run the mocked suite, package build, README rendering, and upload validation in the release workflow.
+
 ## OpenAPI Alignment Gap Analysis
 
 Trailing-slash-only differences are intentionally not listed as actionable gaps because the Mailinator API accepts both forms.
