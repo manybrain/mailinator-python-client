@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog and this project aims to follow Semantic Versioning.
 
+## [1.0.9]
+
+### Added
+
+- Mocked endpoint tests covering SDK request dispatch, response handling, model deserialization, warnings, and required parameter validation without Mailinator credentials.
+- Forward-looking mocked tests for newly planned message retrieval and stream endpoints.
+- SDK support for domain message listing and message summary/text/header retrieval request classes.
+
+### Changed
+
+- Deprecated singular authenticator request classes and routed them through the canonical `/authenticators/` endpoints. These are duplicate endpoints.
+- Raised the minimum supported Python version to 3.10, dropping Python 3.9 and earlier.
+- Updated development, runtime test, build, and release dependency pins in `requirements.txt` for Python 3.10+.
+
 ## [1.0.8]
 
 ### Added

@@ -1,6 +1,6 @@
-# AI Instructions
+# OpenAPI Alignment Workflow
 
-This document explains the relationship between this Python client and the Mailinator OpenAPI specification.
+This is the canonical guide to the Python client's architecture, request conventions, and alignment with the Mailinator OpenAPI specification. Keep durable workflow and convention changes here; keep current gaps and their status in `ROADMAP.md`.
 
 **OpenAPI Specification:** [https://github.com/manybrain/mailinatordocs/blob/main/openapi/mailinator-api.yaml](https://github.com/manybrain/mailinatordocs/blob/main/openapi/mailinator-api.yaml)
 
